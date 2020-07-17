@@ -16,6 +16,7 @@ class Student(Person):
         self._student = {}
 
     def __str__(self):
+        """Print json string"""
         self._student["id"] = self._id
         self._student["first_name"] = self._first_name
         self._student["last_name"] = self._last_name
