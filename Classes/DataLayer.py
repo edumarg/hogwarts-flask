@@ -2,10 +2,20 @@ import json
 import os
 from datetime import datetime
 
+from Validators.Validators import ValidateEmail
+
 
 class DataLayer:
     def __init__(self):
         self._students_dictionary = {}
+
+    def email_validation(self, email):
+        """Validate that student email does not exists"""
+        validate_email = ValidateEmail(email, self._students_dictionary)
+        if validate_email.validate():
+            return True
+        else:
+            return False
 
     def set_student(self, student):
         """appends student to the students dictionary"""
@@ -33,12 +43,37 @@ class DataLayer:
         else:
             print("email not found, student was not deleted\n")
 
+    def load_students(self):
+        """loads all the users in the json file into a dictionary object """
+        if os.path.isfile("students.json"):
+            try:
+                with open(os.path.join("data", "students.json"), "r") as file:
+                    data = file.read()
+                self._students_dictionary = json.loads(data)
+                print("load successful\n")
+                return self._students_dictionary
+            except IOError:
+                print("load failed\n")
+
+        else:
+            with open(os.path.join("data", "students.json"), "w+") as file:
+                data = json.dumps(self._students_dictionary)
+                file.write(data)
+            print("load failed because user.json file did not exists and was created\n")
+
     def persists_students(self):
         """converts the dictionary to a json and stores it within the data directory as file"""
         data = json.dumps(self._users_dictionary)
         try:
-            with open("students.json", "w+") as file:
+            with open(os.path.join("data", "students.json"), "w+") as file:
                 file.write(data)
             print("persist command successful\n")
         except IOError:
             print("persist failed\n")
+
+    def get_all_students(self):
+        return self._students_dictionary
+
+    def students_json(self):
+        students_as_json = json.dumps(self.get_all_students())
+        return students_as_json

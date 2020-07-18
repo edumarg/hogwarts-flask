@@ -1,8 +1,15 @@
 from flask import Flask
 
+from Classes.DataLayer import DataLayer
 from Classes.Student import Student
 
 app = Flask(__name__)
+
+
+@app.before_first_request("/students")
+def populate_internal_student_dictionary():
+    datalayer = DataLayer()
+    datalayer.load_students()
 
 
 # GET students

@@ -1,3 +1,16 @@
+class ValidateEmail():
+    def __init__(self, email, users):
+        self._email = email
+        self._users = users
+
+    def validate(self):
+        if self._email in self._users:
+            print("user already exist, please use a different email\n")
+            return False
+        else:
+            return True
+
+
 class ValidateNewStudent:
     def __init__(self, student):
         self._student = student
@@ -36,4 +49,3 @@ class ValidateEditStudent:
         else:
             print("Student does not exist..\n")
             return False
-   
