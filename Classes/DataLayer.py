@@ -18,7 +18,7 @@ class DataLayer:
             return False
 
     def set_student(self, student):
-        """appends student to the students dictionary"""
+        """appends student to the students internal  dictionary"""
         email = student["email"]
         self._students_dictionary[f'{email}'] = student
         now = datetime.now()
@@ -28,7 +28,7 @@ class DataLayer:
         print("save user success\n")
 
     def get_student(self, email):
-        """get student by email"""
+        """get student by email from the internal student dictionary"""
         if email not in self._students_dictionary:
             print("student does not exist, please use a different email\n")
             return False
@@ -36,7 +36,7 @@ class DataLayer:
             return self._students_dictionary[f'{email}']
 
     def delete_student(self, email):
-        """deletes a user from the dictionary by its email"""
+        """deletes a user from the internal dictionary by its email"""
         if email in self._students_dictionary:
             self._students_dictionary.pop(email, "email not found...")
             print("Student delete successful\n")
@@ -44,8 +44,8 @@ class DataLayer:
             print("email not found, student was not deleted\n")
 
     def load_students(self):
-        """loads all the users in the json file into a dictionary object """
-        if os.path.isfile("students.json"):
+        """loads all the users in the json file into the internal dictionary"""
+        if os.path.isfile(os.path.join("data", "students.json")):
             try:
                 with open(os.path.join("data", "students.json"), "r") as file:
                     data = file.read()
@@ -59,10 +59,10 @@ class DataLayer:
             with open(os.path.join("data", "students.json"), "w+") as file:
                 data = json.dumps(self._students_dictionary)
                 file.write(data)
-            print("load failed because user.json file did not exists and was created\n")
+            print("load failed because students.json file did not exists and was created\n")
 
     def persists_students(self):
-        """converts the dictionary to a json and stores it within the data directory as file"""
+        """converts the internal dictionary to a json and stores it within the students.json file"""
         data = json.dumps(self._users_dictionary)
         try:
             with open(os.path.join("data", "students.json"), "w+") as file:
@@ -77,3 +77,6 @@ class DataLayer:
     def students_json(self):
         students_as_json = json.dumps(self.get_all_students())
         return students_as_json
+
+    def __str__(self):
+        return str(self._students_dictionary)

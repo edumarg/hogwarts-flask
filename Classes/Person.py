@@ -5,3 +5,6 @@ class Person:
         self._las_name = last_name
         self._email = email
         self._password = password
+
+    def get_email(self):
+        return self._email

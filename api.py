@@ -1,27 +1,32 @@
-from flask import Flask
-
+from flask import Flask, json, escape, request
 from Classes.DataLayer import DataLayer
+from Classes.Skill import Skill
 from Classes.Student import Student
 
 app = Flask(__name__)
 
 
-@app.before_first_request("/students")
-def populate_internal_student_dictionary():
-    datalayer = DataLayer()
-    datalayer.load_students()
+# GET before first request student.json file
+@app.before_first_request
+def before_first_request_func():
+    students = datalayer.load_students()
+    return students
 
 
 # GET students
 @app.route("/students")
 def get_students():
-    pass
+    data = students
+    response = app.response_class(response=json.dumps(data), status=200, mimetype="application/json")
+    return response
 
 
 # GET student by email
 @app.route("/students/<email>")
 def get_student_by_email(email):
-    pass
+    student = datalayer.get_student(email)
+    response = app.response_class(response=json.dumps(student), status=200, mimetype="application/json")
+    return response
 
 
 # GET count desired skill
@@ -38,14 +43,36 @@ def get_specific_skill(skill):
 
 # GET students per day
 @app.route("/students/day")
-def get_studetn_specific_day():
+def get_student_specific_day():
     pass
 
 
 # POST new student
-@app.route("/students/<student_id>", methods=["POST"])
-def add_new_student(student_id):
-    pass
+@app.route("/students/new", methods=["POST"])
+def add_new_student():
+    student_id = escape(request.form.get("student_id"))
+    first_name = escape(request.form.get("first_name"))
+    last_name = escape(request.form.get("last_name"))
+    email = escape(request.form.get("email"))
+    password = escape(request.form.get("password"))
+    magic_skill_name = escape(request.form.get("magic_skill_name"))
+    magic_skill_level = escape(request.form.get("magic_skill_level"))
+    magic_skill = Skill.from_sting(magic_skill_name, magic_skill_level)
+    desire_skill_name = escape(request.form.get("desire_skill_name"))
+    desire_skill_level = escape(request.form.get("desire_skill_level"))
+    desire_skill = Skill.from_sting(desire_skill_name, desire_skill_level)
+    print("magic", magic_skill)
+    print("desire", desire_skill)
+    student_dict = {"id": f"{student_id}", "first_name": f"{first_name}", "last_name": f"{last_name}",
+                    "email": f"{email}", "password": f"{password}", "magic_skill": f"{magic_skill}",
+                    "desire_skill": f"{desire_skill}"}
+    print("new student", student_dict)
+    new_student = Student(student_id, first_name, last_name, email, password)
+    print("student instance", new_student)
+    datalayer.set_student(student_dict)
+    print("dat", datalayer)
+    response = app.response_class(response="Student added successfully", status=200, mimetype='application/json')
+    return response
 
 
 # POST login student
@@ -67,7 +94,6 @@ def delete_student(student_id):
 
 
 if __name__ == "__main__":
-    # app.run()
-    add_new_student = Student(id=1, first_name="Edu", last_name="Marg", email="edu@mail.com", password="1234",
-                              existing_skills={}, desire_skills={})
-    print(add_new_student)
+    datalayer = DataLayer()
+    students = {}
+    app.run()

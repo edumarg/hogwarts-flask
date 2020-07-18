@@ -13,17 +13,12 @@ class Student(Person):
         self._password = password
         self._existing_skills = existing_skills
         self._desire_skills = desire_skills
-        self._student = {}
+        self._student = {"id": self._id, "first_name": self._first_name, "last_name": self._last_name,
+                         "email": self._email, "password": self._password, "existing_skills": self._existing_skills,
+                         "desire_skills": self._desire_skills}
 
     def __str__(self):
         """Print json string"""
-        self._student["id"] = self._id
-        self._student["first_name"] = self._first_name
-        self._student["last_name"] = self._last_name
-        self._student["email"] = self._email
-        self._student["password"] = self._password
-        self._student["existing_skills"] = self._existing_skills
-        self._student["desire_skills"] = self._desire_skills
         return json.dumps(self._student)
 
     def add_existing_skill(self, skill):
@@ -33,5 +28,5 @@ class Student(Person):
         self._desire_skills.append(skill)
 
     @classmethod
-    def from_json(cls, data):
-        return cls(json.loads(data))
+    def from_json(cls, student):
+        return cls(json.loads(student))

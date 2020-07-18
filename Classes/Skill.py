@@ -11,3 +11,7 @@ class Skill:
         self._skill["name"] = self._name
         self._skill["level"] = self._level
         return json.dumps(self._skill)
+
+    @classmethod
+    def from_sting(cls, name, level):
+        return cls(name=name, level=level)
