@@ -61,16 +61,12 @@ def add_new_student():
     desire_skill_name = escape(request.form.get("desire_skill_name"))
     desire_skill_level = escape(request.form.get("desire_skill_level"))
     desire_skill = Skill.from_sting(desire_skill_name, desire_skill_level)
-    print("magic", magic_skill)
-    print("desire", desire_skill)
     student_dict = {"id": f"{student_id}", "first_name": f"{first_name}", "last_name": f"{last_name}",
                     "email": f"{email}", "password": f"{password}", "magic_skill": f"{magic_skill}",
                     "desire_skill": f"{desire_skill}"}
-    print("new student", student_dict)
     new_student = Student(student_id, first_name, last_name, email, password)
-    print("student instance", new_student)
     datalayer.set_student(student_dict)
-    print("dat", datalayer)
+    print(datalayer)
     response = app.response_class(response="Student added successfully", status=200, mimetype='application/json')
     return response
 
@@ -88,9 +84,20 @@ def edit_student(student_id):
 
 
 # DELETE student
-@app.route("/students/<student_id>", methods=["DELETE"])
-def delete_student(student_id):
-    pass
+@app.route("/students/<email>", methods=["DELETE"])
+def delete_student(email):
+    datalayer.delete_student(email)
+    print(datalayer)
+    response = app.response_class(response="Student deleted successfully", status=200, mimetype='application/json')
+    return response
+
+
+# Persist dictiorany on file:
+@app.route("/students/persist")
+def persist_data():
+    datalayer.persists_students()
+    response = app.response_class(response="Data Persisted", status=200,
+                                  mimetype="application/json")
 
 
 if __name__ == "__main__":

@@ -63,7 +63,7 @@ class DataLayer:
 
     def persists_students(self):
         """converts the internal dictionary to a json and stores it within the students.json file"""
-        data = json.dumps(self._users_dictionary)
+        data = json.dumps(self._students_dictionary)
         try:
             with open(os.path.join("data", "students.json"), "w+") as file:
                 file.write(data)
