@@ -20,8 +20,8 @@ class ValidateNewStudent:
 
     def validate_compleate_info(self):
         if ("id" in self._student) and ("first_name" in self._student) and ("last_name" in self._student) \
-                and ("email" in self._student) and ("password" in self._student) and "existing_skills" in self._student \
-                and "desire_skills" in self._student:
+                and ("email" in self._student) and "current_skills" in self._student \
+                and "desier_skills" in self._student:
             return True
         else:
             print("student missing information...")

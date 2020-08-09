@@ -8,8 +8,7 @@ class Skill:
         self._skill = {}
 
     def __str__(self):
-        self._skill["name"] = self._name
-        self._skill["level"] = self._level
+        self._skill[self._name] = self._level
         return json.dumps(self._skill)
 
     @classmethod

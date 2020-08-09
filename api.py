@@ -2,22 +2,24 @@ from flask import Flask, json, escape, request
 from Classes.DataLayer import DataLayer
 from Classes.Skill import Skill
 from Classes.Student import Student
+from flask_cors import CORS
 
 app = Flask(__name__)
+cors = CORS(app)
 
 
 # GET before first request student.json file
-@app.before_first_request
-def before_first_request_func():
-    students = datalayer.load_students()
-    return students
+# @app.before_first_request
+# def before_first_request_func():
+#     students = datalayer.load_students()
+#     return students
 
 
 # GET students
 @app.route("/students")
 def get_students():
-    data = students
-    response = app.response_class(response=json.dumps(data), status=200, mimetype="application/json")
+    sudents = datalayer.get_all_students()
+    response = app.response_class(response=json.dumps(sudents), status=200, mimetype="application/json")
     return response
 
 
@@ -50,29 +52,30 @@ def get_student_specific_day():
 # POST new student
 @app.route("/students/new", methods=["POST"])
 def add_new_student():
-    student_id = escape(request.form.get("student_id"))
-    first_name = escape(request.form.get("first_name"))
-    last_name = escape(request.form.get("last_name"))
-    email = escape(request.form.get("email"))
-    password = escape(request.form.get("password"))
-    magic_skill_name = escape(request.form.get("magic_skill_name"))
-    magic_skill_level = escape(request.form.get("magic_skill_level"))
-    magic_skill = Skill.from_sting(magic_skill_name, magic_skill_level)
-    desire_skill_name = escape(request.form.get("desire_skill_name"))
-    desire_skill_level = escape(request.form.get("desire_skill_level"))
-    desire_skill = Skill.from_sting(desire_skill_name, desire_skill_level)
-    student_dict = {"id": f"{student_id}", "first_name": f"{first_name}", "last_name": f"{last_name}",
-                    "email": f"{email}", "password": f"{password}", "magic_skill": f"{magic_skill}",
-                    "desire_skill": f"{desire_skill}"}
-    new_student = Student(student_id, first_name, last_name, email, password)
-    datalayer.set_student(student_dict)
-    print(datalayer)
-    response = app.response_class(response="Student added successfully", status=200, mimetype='application/json')
-    return response
+    student = request.json
+    print("students from react", student)
+    # response = json.dumps(student,
+    #                       status=200,
+    #                       mimetype='application/json')
+
+    # student_id = student["id"]
+    # first_name = student["firstName"]
+    # last_name = student["lastName"]
+    # email = student["email"]
+    # current_skills = student["currentSkills"]
+    # desier_skills = student["desierSkills"]
+    # student_dict = {"id": f"{student_id}", "firstName": f"{first_name}", "lastName": f"{last_name}",
+    #                 "email": f"{email}", "currentSkills": f"{current_skills}",
+    #                 "desierSkills": f"{desier_skills}"}
+    new_student = Student(student["id"], student["firstName"], student["lastName"], tudent["email"])
+    datalayer.set_student(student)
+    print("data layer", datalayer)
+    # response = app.response_class(response="Student added successfully", status=200, mimetype='application/json')
+    response = "OK"
 
 
-# POST login student
-@app.route("/students/login", methods=["POST"])
+# POST login admin
+@app.route("/login", methods=["POST"])
 def login_student():
     pass
 
@@ -102,5 +105,5 @@ def persist_data():
 
 if __name__ == "__main__":
     datalayer = DataLayer()
-    students = {}
+    datalayer.load_students()
     app.run()

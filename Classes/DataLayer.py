@@ -72,7 +72,10 @@ class DataLayer:
             print("persist failed\n")
 
     def get_all_students(self):
-        return self._students_dictionary
+        students_list = []
+        for email in self._students_dictionary:
+            students_list.append(self._students_dictionary[email])
+        return students_list
 
     def students_json(self):
         students_as_json = json.dumps(self.get_all_students())
