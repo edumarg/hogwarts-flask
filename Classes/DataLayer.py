@@ -8,6 +8,7 @@ from Validators.Validators import ValidateEmail
 class DataLayer:
     def __init__(self):
         self._students_dictionary = {}
+        self._admins_dictionary = {}
 
     def email_validation(self, email):
         """Validate that student email does not exists"""
@@ -43,6 +44,19 @@ class DataLayer:
         else:
             print("email not found, student was not deleted\n")
 
+    def load_admins(self):
+        """loads all the users in the json file into the internal dictionary"""
+        if os.path.isfile(os.path.join("data", "admins.json")):
+            try:
+                with open(os.path.join("data", "admins.json"), "r") as file:
+                    data = file.read()
+                self._admins_dictionary = json.loads(data)
+                print("load successful\n")
+                return self._admins_dictionary
+            except IOError:
+                print("load failed\n")
+                return
+
     def load_students(self):
         """loads all the users in the json file into the internal dictionary"""
         if os.path.isfile(os.path.join("data", "students.json")):
@@ -54,12 +68,14 @@ class DataLayer:
                 return self._students_dictionary
             except IOError:
                 print("load failed\n")
+                return
 
         else:
             with open(os.path.join("data", "students.json"), "w+") as file:
                 data = json.dumps(self._students_dictionary)
                 file.write(data)
             print("load failed because students.json file did not exists and was created\n")
+            return
 
     def persists_students(self):
         """converts the internal dictionary to a json and stores it within the students.json file"""
@@ -70,6 +86,12 @@ class DataLayer:
             print("persist command successful\n")
         except IOError:
             print("persist failed\n")
+
+    def get_all_admins(self):
+        admin_list = []
+        for email in self._admins_dictionary:
+            admin_list.append(self._admins_dictionary[email])
+        return admin_list
 
     def get_all_students(self):
         students_list = []

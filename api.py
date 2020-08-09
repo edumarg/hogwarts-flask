@@ -15,11 +15,19 @@ cors = CORS(app)
 #     return students
 
 
+# GET Admins
+@app.route("/admins")
+def get_admins():
+    admins = datalayer.get_all_admins()
+    response = app.response_class(response=json.dumps(admins), status=200, mimetype="application/json")
+    return response
+
+
 # GET students
 @app.route("/students")
 def get_students():
-    sudents = datalayer.get_all_students()
-    response = app.response_class(response=json.dumps(sudents), status=200, mimetype="application/json")
+    students = datalayer.get_all_students()
+    response = app.response_class(response=json.dumps(students), status=200, mimetype="application/json")
     return response
 
 
@@ -53,25 +61,10 @@ def get_student_specific_day():
 @app.route("/students/new", methods=["POST"])
 def add_new_student():
     student = request.json
-    print("students from react", student)
-    # response = json.dumps(student,
-    #                       status=200,
-    #                       mimetype='application/json')
-
-    # student_id = student["id"]
-    # first_name = student["firstName"]
-    # last_name = student["lastName"]
-    # email = student["email"]
-    # current_skills = student["currentSkills"]
-    # desier_skills = student["desierSkills"]
-    # student_dict = {"id": f"{student_id}", "firstName": f"{first_name}", "lastName": f"{last_name}",
-    #                 "email": f"{email}", "currentSkills": f"{current_skills}",
-    #                 "desierSkills": f"{desier_skills}"}
-    new_student = Student(student["id"], student["firstName"], student["lastName"], tudent["email"])
+    new_student = Student(student["id"], student["firstName"], student["lastName"], student["email"])
     datalayer.set_student(student)
-    print("data layer", datalayer)
-    # response = app.response_class(response="Student added successfully", status=200, mimetype='application/json')
-    response = "OK"
+    response = app.response_class(response=json.dumps(student), status=200, mimetype='application/json')
+    return response
 
 
 # POST login admin
@@ -101,9 +94,11 @@ def persist_data():
     datalayer.persists_students()
     response = app.response_class(response="Data Persisted", status=200,
                                   mimetype="application/json")
+    return response
 
 
 if __name__ == "__main__":
     datalayer = DataLayer()
     datalayer.load_students()
+    datalayer.load_admins()
     app.run()
