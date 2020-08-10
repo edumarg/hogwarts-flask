@@ -5,7 +5,7 @@ class MongoDataLayer:
     def __create(self):
         self.__client = pymongo.MongoClient("http://localhost/", 27017)
         self.__students_db = self.__client["students"]
-        self.__admins_db = self.__sclient["admins"]
+        self.__admins_db = self.__sclient["administrators"]
 
     def __init__(self):
         self.__create()
