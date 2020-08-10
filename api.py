@@ -112,6 +112,6 @@ def persist_data():
 
 if __name__ == "__main__":
     datalayer = DataLayer()
-    datalayer.load_students()
-    datalayer.load_admins()
+    # datalayer.load_students()
+    # datalayer.load_admins()
     app.run()

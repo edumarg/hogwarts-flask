@@ -1,6 +1,6 @@
 {
   "e@mai.com": {
-    "id": "a1b2c3d4",
+    "_id": "",
     "firstName": "Edu",
     "lastName": "Marg",
     "email": "e@mail.com",
@@ -9,7 +9,7 @@
     "password": "123Abc"
   },
   "o@mai.com": {
-    "id": "e5f6g7h8",
+    "_id": "",
     "firstName": "O",
     "lastName": "Marg",
     "email": "o@mail.com",

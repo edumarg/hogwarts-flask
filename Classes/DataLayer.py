@@ -2,10 +2,13 @@ import json
 import os
 from datetime import datetime
 
+from Classes.MongoDataLayer import MongoDataLayer
 from Validators.Validators import ValidateEmail
 
 
 class DataLayer:
+    mongoDB = MongoDataLayer()
+
     def __init__(self):
         self._students_dictionary = {}
         self._admins_dictionary = {}
@@ -48,7 +51,7 @@ class DataLayer:
 
     def edit_student(self, student):
         student_to_edit = self.get_student(student.email)
-        
+
     def delete_student(self, email):
         """deletes a user from the internal dictionary by its email"""
         if email in self._students_dictionary:
@@ -70,35 +73,52 @@ class DataLayer:
                 print("load failed\n")
                 return
 
-    def load_students(self):
-        """loads all the users in the json file into the internal dictionary"""
+    # def load_students(self):
+    # """loads all the users in the json file into the internal dictionary"""
+    # if os.path.isfile(os.path.join("data", "students.json")):
+    #     try:
+    #         with open(os.path.join("data", "students.json"), "r") as file:
+    #             data = file.read()
+    #         self._students_dictionary = json.loads(data)
+    #         print("load successful\n")
+    #         return self._students_dictionary
+    #     except IOError:
+    #         print("load failed\n")
+    #         return
+    #
+    # else:
+    #     with open(os.path.join("data", "students.json"), "w+") as file:
+    #         data = json.dumps(self._students_dictionary)
+    #         file.write(data)
+    #     print("load failed because students.json file did not exists and was created\n")
+    #     return
+
+    def persists_students(self):
+
+        """persist the local json file to mongoDB this will be delete after the data was created on mongoDB"""
         if os.path.isfile(os.path.join("data", "students.json")):
             try:
                 with open(os.path.join("data", "students.json"), "r") as file:
                     data = file.read()
                 self._students_dictionary = json.loads(data)
                 print("load successful\n")
-                return self._students_dictionary
+                for student in self._students_dictionary:
+                    DataLayer.mongoDB.add_student(student['email'])
             except IOError:
                 print("load failed\n")
                 return
 
-        else:
-            with open(os.path.join("data", "students.json"), "w+") as file:
-                data = json.dumps(self._students_dictionary)
-                file.write(data)
-            print("load failed because students.json file did not exists and was created\n")
-            return
+            # """converts the internal dictionary to a json and stores it within the students.json file"""
+            # data = json.dumps(self._students_dictionary)
+            # try:
+            #     with open(os.path.join("data", "students.json"), "w+") as file:
+            #         file.write(data)
+            #     print("persist command successful\n")
+            # except IOError:
+            #     print("persist failed\n")
 
-    def persists_students(self):
-        """converts the internal dictionary to a json and stores it within the students.json file"""
-        data = json.dumps(self._students_dictionary)
-        try:
-            with open(os.path.join("data", "students.json"), "w+") as file:
-                file.write(data)
-            print("persist command successful\n")
-        except IOError:
-            print("persist failed\n")
+    def persist_admins(self):
+        pass
 
     def get_all_admins(self):
         admin_list = []

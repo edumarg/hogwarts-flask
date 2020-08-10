@@ -1,23 +1,64 @@
 import pymongo
 
+from Classes.Administrator import Administrator
+from Classes.Student import Student
+
 
 class MongoDataLayer:
     def __create(self):
-        self.__client = pymongo.MongoClient("http://localhost/", 27017)
-        self.__students_db = self.__client["students"]
-        self.__admins_db = self.__sclient["administrators"]
+        self.__client = pymongo.MongoClient("localhost", 27017)
+        self.__db = self.__client["hogwarts"]
 
     def __init__(self):
         self.__create()
 
     def get_all_students(self):
-        pass
+        students_dict = {}
+        students = self.__db["students"].find()
+        for student in students:
+            students_dict[student["_id"]] = student
+        return students
 
     def get_all_admins(self):
-        pass
+        admins_dict = {}
+        admins = self.__db["administrators"].find()
+        for admin in admins:
+            admins_dict[admin["_id"]] = admin
+        return admin
 
     def get_student_by_email(self, email):
-        pass
+        student = self.__db["students"].find({"email": email})
+        student_found = Student(student)
+        return student_found
 
     def get_admin_by_email(self, email):
-        pass
+        admin = self.__db["administrator"].find({"email": email})
+        admin_found = Administrator(admin)
+        return admin_found
+
+    def add_student(self, student):
+        student = self.__db["students"].find({"email": student["email"]})
+        if not student:
+            del student["_id"]
+            return self.__db["students"].insert(student)
+        if student:
+            print("student email already exist")
+            return False
+
+    def add_admin(self, admin):
+        admin = self.__db["administrators"].find({"email": admin["email"]})
+        if not admin:
+            del admin["_id"]
+            return self.__db["administrators"].insert(admin)
+        if admin:
+            print("admin email already exist")
+            return False
+
+    def edit_student_by_email(self, student):
+        return self.__db["students"].update({"email": student["email"]}, student)
+
+    def edit_admin_by_email(self, admin):
+        return self.__db["administrators"].update({"email": admin["email"]}, admin)
+
+    def delete_student_by_email(self, email):
+        return self.__db["students"].remove({"email": email})
