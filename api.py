@@ -1,18 +1,12 @@
-from flask import Flask, json, escape, request
+from flask import Flask, json, request
+
+from Classes.Administrator import Administrator
 from Classes.DataLayer import DataLayer
-from Classes.Skill import Skill
 from Classes.Student import Student
 from flask_cors import CORS
 
 app = Flask(__name__)
 cors = CORS(app)
-
-
-# GET before first request student.json file
-# @app.before_first_request
-# def before_first_request_func():
-#     students = datalayer.load_students()
-#     return students
 
 
 # GET Admins
@@ -67,6 +61,16 @@ def add_new_student():
     return response
 
 
+# POST new admin
+@app.route("/admins/new", methods=["POST"])
+def add_new_admin():
+    admin = request.json
+    new_admin = Administrator(admin["id"], admin["firstName"], admin["lastName"], admin["email"], admin["password"])
+    datalayer.set_admin(admin)
+    response = app.response_class(response=json.dumps(admin), status=200, mimetype='application/json')
+    return response
+
+
 # POST login admin
 @app.route("/login", methods=["POST"])
 def login_student():
@@ -74,21 +78,30 @@ def login_student():
 
 
 # EDIT student
-@app.route("/students/<student_id>", methods=["PUT"])
-def edit_student(student_id):
-    pass
+@app.route("/students/<email>", methods=["PUT"])
+def edit_student(email):
+    student = request.json
+    response = app.response_class(response="Logic not implemented yet", status=200, mimetype='application/json')
+    return response
+
+
+# EDIT admin
+@app.route("/admins/<email>", methods=["PUT"])
+def edit_admin(email):
+    admin = request.json
+    response = app.response_class(response="Logic not implemented yet", status=200, mimetype='application/json')
+    return response
 
 
 # DELETE student
 @app.route("/students/<email>", methods=["DELETE"])
 def delete_student(email):
     datalayer.delete_student(email)
-    print(datalayer)
     response = app.response_class(response="Student deleted successfully", status=200, mimetype='application/json')
     return response
 
 
-# Persist dictiorany on file:
+# Persist dictionay on file:
 @app.route("/students/persist")
 def persist_data():
     datalayer.persists_students()

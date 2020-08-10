@@ -28,6 +28,16 @@ class DataLayer:
         self._students_dictionary[f'{email}']["last_update"] = created_at
         print("save user success\n")
 
+    def set_admin(self, admin):
+        """appends student to the students internal  dictionary"""
+        email = admin["email"]
+        self._admins_dictionary[f'{email}'] = admin
+        now = datetime.now()
+        created_at = now.strftime("%Y/%M/%d")
+        self._admins_dictionary[f'{email}']["created_at"] = created_at
+        self._admins_dictionary[f'{email}']["last_update"] = created_at
+        print("admin user success\n")
+
     def get_student(self, email):
         """get student by email from the internal student dictionary"""
         if email not in self._students_dictionary:
@@ -36,6 +46,9 @@ class DataLayer:
         else:
             return self._students_dictionary[f'{email}']
 
+    def edit_student(self, student):
+        student_to_edit = self.get_student(student.email)
+        
     def delete_student(self, email):
         """deletes a user from the internal dictionary by its email"""
         if email in self._students_dictionary:
