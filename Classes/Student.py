@@ -3,13 +3,15 @@ import json
 
 
 class Student(Person):
-    def __init__(self, _id, firstName, lastName, email, currentSkills={},
+    def __init__(self, _id, firstName, lastName, email, createdOn, lastEdit, currentSkills={},
                  desireSkills={}):
-        super(Student, self).__init__(_id, firstName, lastName, email)
+        super(Student, self).__init__(_id, firstName, lastName, email, createdOn, lastEdit)
         self._id = _id
         self._firstName = firstName
         self._lastName = lastName
         self._email = email
+        self._createdOn = createdOn
+        self._lastEdit = lastEdit
         self._currentSkills = currentSkills
         self._desireSkills = desireSkills
         self._student = {"_id": self._id, "firstName": self._firstName, "lastName": self._lastName,

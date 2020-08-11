@@ -55,13 +55,10 @@ def get_student_specific_day():
 @app.route("/students/new", methods=["POST"])
 def add_new_student():
     student = request.json
-    new_student = Student(student["_id"], student["firstName"], student["lastName"], student["email"])
+    new_student = Student(student["_id"], student["firstName"], student["lastName"], student["email"],
+                          student["createdOn"], student["lastEdit"])
     datalayer.set_student(student)
-    if datalayer.set_student(student):
-        message = "students successfully added"
-    else:
-        message = "students already exist on the system"
-    response = app.response_class(response=json.dumps(message), status=200,
+    response = app.response_class(response="students successfully added", status=200,
                                   mimetype='application/json')
     return response
 
@@ -86,7 +83,11 @@ def login_student():
 @app.route("/students/<email>", methods=["PUT"])
 def edit_student(email):
     student = request.json
-    response = app.response_class(response="Logic not implemented yet", status=200, mimetype='application/json')
+    if "_id" in student:
+        del student["_id"]
+    print("edit student no id", student)
+    datalayer.edit_student(student)
+    response = app.response_class(response="Student Edited successfully", status=200, mimetype='application/json')
     return response
 
 
@@ -94,7 +95,10 @@ def edit_student(email):
 @app.route("/admins/<email>", methods=["PUT"])
 def edit_admin(email):
     admin = request.json
-    response = app.response_class(response="Logic not implemented yet", status=200, mimetype='application/json')
+    if "_id" in admin:
+        del admin["_id"]
+    datalayer.edit_admin(admin)
+    response = app.response_class(response="Admin Edited successfully", status=200, mimetype='application/json')
     return response
 
 

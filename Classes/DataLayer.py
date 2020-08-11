@@ -24,10 +24,6 @@ class DataLayer:
     def set_student(self, student):
         """ add student to mongoDB"""
         DataLayer.mongoDB.add_student(student)
-        if DataLayer.mongoDB.add_student(student):
-            return True
-        elif not DataLayer.mongoDB.add_student(student):
-            return False
         # """appends student to the students internal  dictionary"""
         # email = student["email"]
         # self._students_dictionary[f'{email}'] = student
@@ -35,16 +31,18 @@ class DataLayer:
         # created_at = now.strftime("%Y/%M/%d")
         # self._students_dictionary[f'{email}']["created_at"] = created_at
         # self._students_dictionary[f'{email}']["last_update"] = created_at
-        # print("save user success\n")
+        print("save user success\n")
 
     def set_admin(self, admin):
         """appends student to the students internal  dictionary"""
-        email = admin["email"]
-        self._admins_dictionary[f'{email}'] = admin
-        now = datetime.now()
-        created_at = now.strftime("%Y/%M/%d")
-        self._admins_dictionary[f'{email}']["created_at"] = created_at
-        self._admins_dictionary[f'{email}']["last_update"] = created_at
+
+        DataLayer.mongoDB.add_admin(admin)
+        # email = admin["email"]
+        # self._admins_dictionary[f'{email}'] = admin
+        # now = datetime.now()
+        # created_at = now.strftime("%Y/%M/%d")
+        # self._admins_dictionary[f'{email}']["created_at"] = created_at
+        # self._admins_dictionary[f'{email}']["last_update"] = created_at
         print("admin user success\n")
 
     def get_student(self, email):
@@ -56,13 +54,16 @@ class DataLayer:
             return self._students_dictionary[f'{email}']
 
     def edit_student(self, student):
-        self.get_student(student.email)
-        pass
+        DataLayer.mongoDB.edit_student(student)
+        # self.get_student(student.email)
+
+    def edit_admin(self, admin):
+        DataLayer.mongoDB.edit_admin(admin)
 
     def delete_student(self, email):
         """deletes a user from the internal dictionary by its email"""
         DataLayer.mongoDB.delete_student_by_email(email)
-        
+
         # if email in self._students_dictionary:
         #     self._students_dictionary.pop(email, "email not found...")
         #     print("Student delete successful\n")
