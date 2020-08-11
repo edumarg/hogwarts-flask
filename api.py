@@ -29,7 +29,8 @@ def get_students():
 @app.route("/students/<email>")
 def get_student_by_email(email):
     student = datalayer.get_student(email)
-    response = app.response_class(response=json.dumps(student), status=200, mimetype="application/json")
+    response = app.response_class(response=json.dumps(student), status=200,
+                                  mimetype="application/json")
     return response
 
 

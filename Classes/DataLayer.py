@@ -47,11 +47,13 @@ class DataLayer:
 
     def get_student(self, email):
         """get student by email from the internal student dictionary"""
-        if email not in self._students_dictionary:
-            print("student does not exist, please use a different email\n")
-            return False
-        else:
-            return self._students_dictionary[f'{email}']
+        return (DataLayer.mongoDB.get_student_by_email(email))
+
+        # if email not in self._students_dictionary:
+        #     print("student does not exist, please use a different email\n")
+        #     return False
+        # else:
+        #     return self._students_dictionary[f'{email}']
 
     def edit_student(self, student):
         DataLayer.mongoDB.edit_student(student)

@@ -1,4 +1,5 @@
 import pymongo
+import json
 
 from Classes.Administrator import Administrator
 from Classes.Student import Student
@@ -27,13 +28,17 @@ class MongoDataLayer:
         return admin
 
     def get_student_by_email(self, email):
-        student = self.__db["students"].find({"email": email})
-        student_found = Student(student)
-        return student_found
+        student = self.__db["students"].find_one({"email": email})
+        student['_id'] = str(student['_id'])
+        student_found = Student(student["_id"], student["firstName"], student["lastName"], student["email"],
+                                student["createdOn"], student["lastEdit"])
+        return student
 
     def get_admin_by_email(self, email):
-        admin = self.__db["administrator"].find({"email": email})
-        admin_found = Administrator(admin)
+        admin = self.__db["administrator"].find_one({"email": email})
+        admin['_id'] = str(admin['_id'])
+        admin_found = Administrator(admin["_id"], admin["firstName"], admin["lastName"], admin["email"],
+                                    admin["createdOn"], admin["lastEdit"])
         return admin_found
 
     def add_student(self, student):
