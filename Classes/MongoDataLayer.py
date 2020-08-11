@@ -37,20 +37,22 @@ class MongoDataLayer:
         return admin_found
 
     def add_student(self, student):
-        student = self.__db["students"].find({"email": student["email"]})
-        if not student:
-            del student["_id"]
+        student_add = self.__db["students"].find_one({"email": student["email"]})
+        if not student_add:
+            if "_id" in student:
+                del student["_id"]
             return self.__db["students"].insert(student)
-        if student:
+        if student_add:
             print("student email already exist")
             return False
 
     def add_admin(self, admin):
-        admin = self.__db["administrators"].find({"email": admin["email"]})
-        if not admin:
-            del admin["_id"]
+        admin_add = self.__db["administrators"].find_one({"email": admin["email"]})
+        if not admin_add:
+            if "_id" in admin:
+                del admin["_id"]
             return self.__db["administrators"].insert(admin)
-        if admin:
+        if admin_add:
             print("admin email already exist")
             return False
 
@@ -62,3 +64,6 @@ class MongoDataLayer:
 
     def delete_student_by_email(self, email):
         return self.__db["students"].remove({"email": email})
+
+    def shutdown(self):
+        self.__client.close()

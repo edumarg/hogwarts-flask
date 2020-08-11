@@ -1,9 +1,9 @@
 from flask import Flask, json, request
-
 from Classes.Administrator import Administrator
 from Classes.DataLayer import DataLayer
 from Classes.Student import Student
 from flask_cors import CORS
+import atexit
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -101,13 +101,27 @@ def delete_student(email):
     return response
 
 
-# Persist dictionay on file:
+# Persist dictionary on file:
 @app.route("/students/persist")
-def persist_data():
-    datalayer.persists_students()
+def persist_students():
+    datalayer.persist_students()
     response = app.response_class(response="Data Persisted", status=200,
                                   mimetype="application/json")
     return response
+
+
+@app.route("/admins/persist")
+def persist_admins():
+    datalayer.persist_admins()
+    response = app.response_class(response="Data Persisted", status=200,
+                                  mimetype="application/json")
+    return response
+
+
+# Close connection with MongoDB at exit
+@atexit.register
+def close_connection():
+    datalayer.shutdown()
 
 
 if __name__ == "__main__":

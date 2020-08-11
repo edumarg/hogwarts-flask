@@ -1,9 +1,8 @@
 {
-  "b@mail.com": {
+  " b@mail.com": {
     "firstName": "Ber",
     "lastName": "Marg",
     "email": "b@mail.com",
-    "_id": "",
     "currentSkills": {
       "potionMaking": "1",
       "spells": "1",
@@ -26,10 +25,10 @@
     "last_update": "2020/29/09"
   },
   "e@mail.com": {
+    "_id": "",
     "firstName": "Edu",
     "lastName": "Marg",
     "email": "e@mail.com",
-    "_id": "",
     "currentSkills": {
       "potionMaking": "3",
       "spells": "2",
@@ -55,7 +54,6 @@
     "firstName": "hhr",
     "lastName": "Marg",
     "email": "r@mail.com",
-    "id": "e5f6rg7h9",
     "currentSkills": {
       "potionMaking": "3",
       "spells": "2",
