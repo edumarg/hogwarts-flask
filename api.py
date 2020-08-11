@@ -86,7 +86,6 @@ def edit_student(email):
     student = request.json
     if "_id" in student:
         del student["_id"]
-    print("edit student no id", student)
     datalayer.edit_student(student)
     response = app.response_class(response="Student Edited successfully", status=200, mimetype='application/json')
     return response
