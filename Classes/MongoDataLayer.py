@@ -41,10 +41,12 @@ class MongoDataLayer:
         if not student_add:
             if "_id" in student:
                 del student["_id"]
-            return self.__db["students"].insert(student)
+            self.__db["students"].insert(student)
+
+            return True
         if student_add:
-            print("student email already exist")
             return False
+            "student email already exist"
 
     def add_admin(self, admin):
         admin_add = self.__db["administrators"].find_one({"email": admin["email"]})

@@ -5,7 +5,7 @@ import json
 class Student(Person):
     def __init__(self, _id, firstName, lastName, email, currentSkills={},
                  desireSkills={}):
-        super(Student, self).__init__(id, firstName, lastName, email)
+        super(Student, self).__init__(_id, firstName, lastName, email)
         self._id = _id
         self._firstName = firstName
         self._lastName = lastName

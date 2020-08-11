@@ -22,14 +22,16 @@ class DataLayer:
             return False
 
     def set_student(self, student):
-        """appends student to the students internal  dictionary"""
-        email = student["email"]
-        self._students_dictionary[f'{email}'] = student
-        now = datetime.now()
-        created_at = now.strftime("%Y/%M/%d")
-        self._students_dictionary[f'{email}']["created_at"] = created_at
-        self._students_dictionary[f'{email}']["last_update"] = created_at
-        print("save user success\n")
+        """ add student to mongoDB"""
+        DataLayer.mongoDB.add_student(student)
+        # """appends student to the students internal  dictionary"""
+        # email = student["email"]
+        # self._students_dictionary[f'{email}'] = student
+        # now = datetime.now()
+        # created_at = now.strftime("%Y/%M/%d")
+        # self._students_dictionary[f'{email}']["created_at"] = created_at
+        # self._students_dictionary[f'{email}']["last_update"] = created_at
+        # print("save user success\n")
 
     def set_admin(self, admin):
         """appends student to the students internal  dictionary"""
@@ -50,7 +52,8 @@ class DataLayer:
             return self._students_dictionary[f'{email}']
 
     def edit_student(self, student):
-        student_to_edit = self.get_student(student.email)
+        self.get_student(student.email)
+        pass
 
     def delete_student(self, email):
         """deletes a user from the internal dictionary by its email"""

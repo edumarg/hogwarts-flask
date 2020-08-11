@@ -55,9 +55,14 @@ def get_student_specific_day():
 @app.route("/students/new", methods=["POST"])
 def add_new_student():
     student = request.json
-    new_student = Student(student["id"], student["firstName"], student["lastName"], student["email"])
+    new_student = Student(student["_id"], student["firstName"], student["lastName"], student["email"])
     datalayer.set_student(student)
-    response = app.response_class(response=json.dumps(student), status=200, mimetype='application/json')
+    if datalayer.set_student(student):
+        message = "students successfully added"
+    else:
+        message = "students already exist on the system"
+    response = app.response_class(response=json.dumps(message), status=200,
+                                  mimetype='application/json')
     return response
 
 
