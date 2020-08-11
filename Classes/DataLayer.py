@@ -24,6 +24,10 @@ class DataLayer:
     def set_student(self, student):
         """ add student to mongoDB"""
         DataLayer.mongoDB.add_student(student)
+        if DataLayer.mongoDB.add_student(student):
+            return True
+        elif not DataLayer.mongoDB.add_student(student):
+            return False
         # """appends student to the students internal  dictionary"""
         # email = student["email"]
         # self._students_dictionary[f'{email}'] = student
@@ -57,11 +61,13 @@ class DataLayer:
 
     def delete_student(self, email):
         """deletes a user from the internal dictionary by its email"""
-        if email in self._students_dictionary:
-            self._students_dictionary.pop(email, "email not found...")
-            print("Student delete successful\n")
-        else:
-            print("email not found, student was not deleted\n")
+        DataLayer.mongoDB.delete_student_by_email(email)
+        
+        # if email in self._students_dictionary:
+        #     self._students_dictionary.pop(email, "email not found...")
+        #     print("Student delete successful\n")
+        # else:
+        #     print("email not found, student was not deleted\n")
 
     # def load_admins(self):
     #     """loads all the users in the json file into the internal dictionary"""
