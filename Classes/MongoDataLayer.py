@@ -17,15 +17,17 @@ class MongoDataLayer:
         students_dict = {}
         students = self.__db["students"].find()
         for student in students:
+            student['_id'] = str(student['_id'])
             students_dict[student["_id"]] = student
-        return students
+        return students_dict
 
     def get_all_admins(self):
         admins_dict = {}
         admins = self.__db["administrators"].find()
         for admin in admins:
+            admin['_id'] = str(admin['_id'])
             admins_dict[admin["_id"]] = admin
-        return admin
+        return admins_dict
 
     def get_student_by_email(self, email):
         student = self.__db["students"].find_one({"email": email})

@@ -9,19 +9,19 @@ app = Flask(__name__)
 cors = CORS(app)
 
 
-# GET Admins
-@app.route("/admins")
-def get_admins():
-    admins = datalayer.get_all_admins()
-    response = app.response_class(response=json.dumps(admins), status=200, mimetype="application/json")
-    return response
-
-
 # GET students
 @app.route("/students")
 def get_students():
     students = datalayer.get_all_students()
     response = app.response_class(response=json.dumps(students), status=200, mimetype="application/json")
+    return response
+
+
+# GET Admins
+@app.route("/admins")
+def get_admins():
+    admins = datalayer.get_all_admins()
+    response = app.response_class(response=json.dumps(admins), status=200, mimetype="application/json")
     return response
 
 

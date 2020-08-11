@@ -144,16 +144,18 @@ class DataLayer:
                 return
 
     def get_all_admins(self):
-        admin_list = []
-        for email in self._admins_dictionary:
-            admin_list.append(self._admins_dictionary[email])
-        return admin_list
+        return DataLayer.mongoDB.get_all_admins()
+        # admin_list = []
+        # for email in self._admins_dictionary:
+        #     admin_list.append(self._admins_dictionary[email])
+        # return admin_list
 
     def get_all_students(self):
-        students_list = []
-        for email in self._students_dictionary:
-            students_list.append(self._students_dictionary[email])
-        return students_list
+        return DataLayer.mongoDB.get_all_students()
+        # students_list = []
+        # for email in self._students_dictionary:
+        #     students_list.append(self._students_dictionary[email])
+        # return students_list
 
     def students_json(self):
         students_as_json = json.dumps(self.get_all_students())
