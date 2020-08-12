@@ -1,5 +1,5 @@
 import pymongo
-import json
+import os
 
 from Classes.Administrator import Administrator
 from Classes.Student import Student
@@ -40,8 +40,44 @@ class MongoDataLayer:
         admin = self.__db["administrator"].find_one({"email": email})
         admin['_id'] = str(admin['_id'])
         admin_found = Administrator(admin["_id"], admin["firstName"], admin["lastName"], admin["email"],
-                                    admin["createdOn"], admin["lastEdit"])
+                                    admin["createdOn"], admin["lastEdit"], admin["password"])
         return admin_found
+
+    def get_student_count_by_creteated_date(self, date):
+        pipeline = [{"$match": {"createdOn": {"$eq": date}}}, {"$count": "count"}];
+        count = list(self.__db["students"].aggregate(pipeline))
+        if len(count) > 0:
+            return count[0]["count"]
+        else:
+            return 0
+
+    def get_students_by_current_skill(self, skill):
+        pipeline = self.__db["students"].aggregate([{"$project": {
+            "current": {"$objectToArray": "$currentSkills"}}},
+            {"$unwind": "$current"}])
+        skill_list = list(pipeline)
+        count = 0
+        if len(skill_list) > 0:
+            for index_id in skill_list:
+                if index_id["current"]["k"] == skill:
+                    if int(index_id["current"]["v"]) >= 2:
+                        count += 1
+        return count
+
+    def get_students_by_desire_skill(self, skill):
+        print("skill", skill)
+        pipeline = self.__db["students"].aggregate([{"$project": {
+            "desire": {"$objectToArray": "$desierSkills"}}},
+            {"$unwind": "$desire"}])
+        skill_list = list(pipeline)
+        print("skill_list", skill_list)
+        count = 0
+        if len(skill_list) > 0:
+            for index_id in skill_list:
+                if index_id["desire"]["k"] == skill:
+                    if int(index_id["desire"]["v"]) >= 2:
+                        count += 1
+        return count
 
     def add_student(self, student):
         student_add = self.__db["students"].find_one({"email": student["email"]})
@@ -76,6 +112,11 @@ class MongoDataLayer:
         if student_delete:
             self.__db["students"].remove({"email": email})
             return True
+
+    def backup_mongodb(self):
+        command = "mongodump --host localhost --port 27017 --db hogwarts --out "
+        local_folder = "db_backup"
+        os.system(command + local_folder)
 
     def shutdown(self):
         self.__client.close()
