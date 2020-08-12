@@ -1,5 +1,4 @@
 import pymongo
-import json
 
 from Classes.Administrator import Administrator
 from Classes.Student import Student
@@ -40,8 +39,19 @@ class MongoDataLayer:
         admin = self.__db["administrator"].find_one({"email": email})
         admin['_id'] = str(admin['_id'])
         admin_found = Administrator(admin["_id"], admin["firstName"], admin["lastName"], admin["email"],
-                                    admin["createdOn"], admin["lastEdit"])
+                                    admin["createdOn"], admin["lastEdit"], admin["password"])
         return admin_found
+
+    def get_student_count_by_creteated_date(self, date):
+        pipeline = [{"$match": {"createdOn": {"$gt": date}}}, {"$count": "count"}];
+        count = list(self.__db["students"].aggregate(pipeline))
+        return count[0]["count"]
+
+    def get_students_by_current_skill(self, skill):
+        pass
+
+    def get_students_by_desier_skill(self, skill):
+        pass
 
     def add_student(self, student):
         student_add = self.__db["students"].find_one({"email": student["email"]})

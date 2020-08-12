@@ -47,9 +47,14 @@ def get_specific_skill(skill):
 
 
 # GET students per day
-@app.route("/students/day")
-def get_student_specific_day():
-    pass
+@app.route("/students/createdOn")
+def get_student_count_specific_day():
+    date = request.args.get("date")
+    new_date = date.replace("_", "/")
+    count = datalayer.get_student_count_by_creteated_date(new_date)
+    print(count)
+    response = app.response_class(response=json.dumps(count), status=200, mimetype="application/json")
+    return response
 
 
 # POST new student
