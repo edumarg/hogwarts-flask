@@ -34,25 +34,27 @@ def get_student_by_email(email):
     return response
 
 
-# GET count desired skill
-@app.route("/skills/desire")
-def get_desire_skills():
-    pass
-
-
 # GET count of students with specific skills
-@app.route("/skills/<skill>")
-def get_specific_skill(skill):
+@app.route("/skills/current")
+def get_specific_skill():
+    skill = request.args.get("skill")
+    count = datalayer.get_students_by_current_skill(skill)
+    response = app.response_class(response=json.dumps(count), status=200, mimetype="application/json")
+    return response
+
+
+# GET count of students with desired skill
+@app.route("/skills/desire")
+def get_desire_skills(skill):
     pass
 
 
-# GET students per day
+# GET count students per day
 @app.route("/students/createdOn")
 def get_student_count_specific_day():
     date = request.args.get("date")
     new_date = date.replace("_", "/")
     count = datalayer.get_student_count_by_creteated_date(new_date)
-    print(count)
     response = app.response_class(response=json.dumps(count), status=200, mimetype="application/json")
     return response
 

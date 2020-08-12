@@ -68,10 +68,10 @@ class DataLayer:
         return DataLayer.mongoDB.get_student_count_by_creteated_date(date)
 
     def get_students_by_current_skill(self, skill):
-        pass
+        return DataLayer.mongoDB.get_students_by_current_skill(skill)
 
-    def get_students_by_desier_skill(self, skill):
-        pass
+    def get_students_by_desire_skill(self, skill):
+        return DataLayer.mongoDB.get_students_by_desire_skill(skill)
 
     def students_json(self):
         students_as_json = json.dumps(self.get_all_students())
