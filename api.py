@@ -45,8 +45,11 @@ def get_specific_skill():
 
 # GET count of students with desired skill
 @app.route("/skills/desire")
-def get_desire_skills(skill):
-    pass
+def get_desire_skills():
+    skill = request.args.get("skill")
+    count = datalayer.get_students_by_desire_skill(skill)
+    response = app.response_class(response=json.dumps(count), status=200, mimetype="application/json")
+    return response
 
 
 # GET count students per day

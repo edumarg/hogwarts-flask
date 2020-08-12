@@ -63,49 +63,54 @@ class MongoDataLayer:
                         count += 1
         return count
 
+    def get_students_by_desire_skill(self, skill):
+        print("skill", skill)
+        pipeline = self.__db["students"].aggregate([{"$project": {
+            "desire": {"$objectToArray": "$desierSkills"}}},
+            {"$unwind": "$desire"}])
+        skill_list = list(pipeline)
+        print("skill_list", skill_list)
+        count = 0
+        if len(skill_list) > 0:
+            for index_id in skill_list:
+                if index_id["desire"]["k"] == skill:
+                    if int(index_id["desire"]["v"]) >= 2:
+                        count += 1
+        return count
 
-def get_students_by_desire_skill(self, skill):
-    pass
+    def add_student(self, student):
+        student_add = self.__db["students"].find_one({"email": student["email"]})
+        if not student_add:
+            if "_id" in student:
+                del student["_id"]
+            self.__db["students"].insert(student)
+            return True
+        if student_add:
+            return False
 
+    def add_admin(self, admin):
+        admin_add = self.__db["administrators"].find_one({"email": admin["email"]})
+        if not admin_add:
+            if "_id" in admin:
+                del admin["_id"]
+            return self.__db["administrators"].insert(admin)
+        if admin_add:
+            print("admin email already exist")
+            return False
 
-def add_student(self, student):
-    student_add = self.__db["students"].find_one({"email": student["email"]})
-    if not student_add:
-        if "_id" in student:
-            del student["_id"]
-        self.__db["students"].insert(student)
-        return True
-    if student_add:
-        return False
+    def edit_student(self, student):
+        return self.__db["students"].update({"email": student["email"]}, student)
 
+    def edit_admin(self, admin):
+        return self.__db["administrators"].update({"email": admin["email"]}, admin)
 
-def add_admin(self, admin):
-    admin_add = self.__db["administrators"].find_one({"email": admin["email"]})
-    if not admin_add:
-        if "_id" in admin:
-            del admin["_id"]
-        return self.__db["administrators"].insert(admin)
-    if admin_add:
-        print("admin email already exist")
-        return False
+    def delete_student_by_email(self, email):
+        student_delete = self.__db["students"].find_one({"email": email})
+        if not student_delete:
+            return False
+        if student_delete:
+            self.__db["students"].remove({"email": email})
+            return True
 
-
-def edit_student(self, student):
-    return self.__db["students"].update({"email": student["email"]}, student)
-
-
-def edit_admin(self, admin):
-    return self.__db["administrators"].update({"email": admin["email"]}, admin)
-
-
-def delete_student_by_email(self, email):
-    student_delete = self.__db["students"].find_one({"email": email})
-    if not student_delete:
-        return False
-    if student_delete:
-        self.__db["students"].remove({"email": email})
-        return True
-
-
-def shutdown(self):
-    self.__client.close()
+    def shutdown(self):
+        self.__client.close()
