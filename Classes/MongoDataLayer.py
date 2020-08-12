@@ -1,4 +1,5 @@
 import pymongo
+import os
 
 from Classes.Administrator import Administrator
 from Classes.Student import Student
@@ -111,6 +112,11 @@ class MongoDataLayer:
         if student_delete:
             self.__db["students"].remove({"email": email})
             return True
+
+    def backup_mongodb(self):
+        command = "mongodump --host localhost --port 27017 --db hogwarts --out "
+        local_folder = "db_backup"
+        os.system(command + local_folder)
 
     def shutdown(self):
         self.__client.close()

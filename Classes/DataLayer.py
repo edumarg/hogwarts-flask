@@ -77,6 +77,9 @@ class DataLayer:
         students_as_json = json.dumps(self.get_all_students())
         return students_as_json
 
+    def backup_mongodb(self):
+        return DataLayer.mongoDB.backup_mongodb()
+
     def shutdown(self):
         DataLayer.mongoDB.shutdown()
 

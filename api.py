@@ -137,6 +137,14 @@ def persist_admins():
     return response
 
 
+# Backup mongodb
+@app.route("/backup")
+def backup_db():
+    datalayer.backup_mongodb()
+    response = app.response_class(response=json.dumps("backup ok"), status=200, mimetype="application/json")
+    return response
+
+
 # Close connection with MongoDB at exit
 @atexit.register
 def close_connection():
