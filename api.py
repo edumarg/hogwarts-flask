@@ -40,12 +40,6 @@ def get_desire_skills():
     pass
 
 
-# GET count of students with specific skills
-@app.route("/skills/<skill>")
-def get_specific_skill(skill):
-    pass
-
-
 # GET students per day
 @app.route("/students/day")
 def get_student_specific_day():
@@ -68,7 +62,8 @@ def add_new_student():
 @app.route("/admins/new", methods=["POST"])
 def add_new_admin():
     admin = request.json
-    new_admin = Administrator(admin["id"], admin["firstName"], admin["lastName"], admin["email"], admin["password"])
+    new_admin = Administrator(admin["_id"], admin["firstName"], admin["lastName"], admin["email"], admin["createdOn"],
+                              admin["lastEdit"], admin["password"])
     datalayer.set_admin(admin)
     response = app.response_class(response=json.dumps(admin), status=200, mimetype='application/json')
     return response

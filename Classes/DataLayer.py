@@ -1,12 +1,12 @@
 import json
 import os
 
-from Classes.MongoDataLayer import MongoDataLayer
+from Classes.MysqlDataLayer import MysqlDataLayer
 from Validators.Validators import ValidateEmail
 
 
 class DataLayer:
-    mongoDB = MongoDataLayer()
+    mySQL = MysqlDataLayer()
 
     def __init__(self):
         self._students_dictionary = {}
@@ -22,41 +22,38 @@ class DataLayer:
 
     def set_student(self, student):
         """ add student to mongoDB"""
-        DataLayer.mongoDB.add_student(student)
-        print("save student success\n")
+        pass
 
     def set_admin(self, admin):
         """appends student to the students internal  dictionary"""
-
-        DataLayer.mongoDB.add_admin(admin)
-        print("save admin success\n")
+        return DataLayer.mySQL.set_admin(admin)
 
     def get_student(self, email):
         """get student by email from the internal student dictionary"""
-        return (DataLayer.mongoDB.get_student_by_email(email))
+        pass
 
     def edit_student(self, student):
-        DataLayer.mongoDB.edit_student(student)
+        pass
 
     def edit_admin(self, admin):
-        DataLayer.mongoDB.edit_admin(admin)
+        pass
 
     def delete_student(self, email):
         """deletes a user from the internal dictionary by its email"""
-        DataLayer.mongoDB.delete_student_by_email(email)
+        pass
 
     def get_all_admins(self):
-        return DataLayer.mongoDB.get_all_admins()
+        pass
 
     def get_all_students(self):
-        return DataLayer.mongoDB.get_all_students()
+        pass
 
     def students_json(self):
         students_as_json = json.dumps(self.get_all_students())
         return students_as_json
 
     def shutdown(self):
-        DataLayer.mongoDB.shutdown()
+        DataLayer.mySQL.shutdown()
 
     def __str__(self):
         return str(self._students_dictionary)
