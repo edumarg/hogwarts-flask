@@ -2,7 +2,7 @@ import mysql.connector
 from decouple import config
 
 
-class MysqlDataLayer():
+class MysqlDataLayer:
 
     def __connect(self):
         self.__mydb = mysql.connector.connect(
@@ -12,15 +12,17 @@ class MysqlDataLayer():
             database=config('DB')
         )
 
+        self.__mydb.autocommit = True
+
     def __init__(self):
         super().__init__()
         self.__connect()
 
     def set_admin(self, admin):
         """appends student to the students internal  dictionary"""
+        cursor = self.__mydb.cursor()
         try:
-            cursor = self.__mydb.cursor()
-            self.__mydb.start_transaction()
+            # self.__mydb.start_transaction()
             sql = "INSERT INTO administrators (id, firstName, lastName, email, password, createdOn, lastEdit) VALUES " \
                   "(%s,%s, %s, %s, %s, %s, %s) "
             val = (admin["_id"],
@@ -33,11 +35,8 @@ class MysqlDataLayer():
             cursor.execute(sql, val)
             print(cursor.rowcount, "record inserted.")
             return cursor.rowcount
-
         except mysql.connector.Error as error:
             print("Failed to update record to database rollback: {}".format(error))
-
-
         finally:
             cursor.close()
 
