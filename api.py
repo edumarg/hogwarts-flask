@@ -4,9 +4,17 @@ from Classes.DataLayer import DataLayer
 from Classes.Student import Student
 from flask_cors import CORS
 import atexit
+from datetime import datetime
 
 app = Flask(__name__)
 cors = CORS(app)
+
+
+def set_creatOn_lastEdid_dates(user):
+    now = datetime.now().strftime("%Y/%m/%d")
+    user["createdOn"] = now
+    user["lastEdit"] = now
+    return user
 
 
 # GET students
@@ -50,10 +58,17 @@ def get_student_specific_day():
 @app.route("/students/new", methods=["POST"])
 def add_new_student():
     student = request.json
-    new_student = Student(student["_id"], student["firstName"], student["lastName"], student["email"],
-                          student["createdOn"], student["lastEdit"])
+    student = set_creatOn_lastEdid_dates(student)
+    new_student = Student(student["_id"],
+                          student["firstName"],
+                          student["lastName"],
+                          student["email"],
+                          student["createdOn"],
+                          student["lastEdit"],
+                          student["currentSkills"],
+                          student["desireSkills"])
     datalayer.set_student(student)
-    response = app.response_class(response="students successfully added", status=200,
+    response = app.response_class(response=json.dumps(student), status=200,
                                   mimetype='application/json')
     return response
 
@@ -62,8 +77,14 @@ def add_new_student():
 @app.route("/admins/new", methods=["POST"])
 def add_new_admin():
     admin = request.json
-    new_admin = Administrator(admin["_id"], admin["firstName"], admin["lastName"], admin["email"], admin["createdOn"],
-                              admin["lastEdit"], admin["password"])
+    admin = set_creatOn_lastEdid_dates(admin)
+    new_admin = Administrator(admin["_id"],
+                              admin["firstName"],
+                              admin["lastName"],
+                              admin["email"],
+                              admin["createdOn"],
+                              admin["lastEdit"],
+                              admin["password"])
     datalayer.set_admin(admin)
     response = app.response_class(response=json.dumps(admin), status=200, mimetype='application/json')
     return response

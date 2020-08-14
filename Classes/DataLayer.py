@@ -22,7 +22,7 @@ class DataLayer:
 
     def set_student(self, student):
         """ add student to mongoDB"""
-        pass
+        return DataLayer.mySQL.set_student(student)
 
     def set_admin(self, admin):
         """appends student to the students internal  dictionary"""
