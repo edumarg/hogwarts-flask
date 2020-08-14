@@ -2,6 +2,26 @@ import mysql.connector
 from decouple import config
 
 
+def check_skill(skill):
+    if skill == "potionMaking":
+        skill_id = 1
+    elif skill == "spells":
+        skill_id = 2
+    elif skill == "quidditch":
+        skill_id = 3
+    elif skill == "animagus":
+        skill_id = 4
+    elif skill == "apparate":
+        skill_id = 5
+    elif skill == "metamorphmagi":
+        skill_id = 6
+    elif skill == "parseltongue":
+        skill_id = 7
+    else:
+        skill_id = 0
+    return skill_id
+
+
 class MysqlDataLayer:
 
     def __connect(self):
@@ -57,27 +77,10 @@ class MysqlDataLayer:
                            student["lastEdit"])
             cursor.execute(sql_student, val_student)
 
-            skill_id = 0
-
             for (skill, level) in student["currentSkills"].items():
                 sql_magic_skills = "INSERT INTO magic_skills (student_id,skill_id,skill_type_id, skill_level) VALUES " \
-                                   "(%s, %s,%s,%s) "
-                if skill == "potionMaking":
-                    skill_id = 1
-                elif skill == "spells":
-                    skill_id = 2
-                elif skill == "quidditch":
-                    skill_id = 3
-                elif skill == "animagus":
-                    skill_id = 4
-                elif skill == "apparate":
-                    skill_id = 5
-                elif skill == "metamorphmagi":
-                    skill_id = 6
-                elif skill == "parseltongue":
-                    skill_id = 7
-                else:
-                    skill_id = 0
+                                   "(%s, %s,%s,%s)"
+                skill_id = check_skill(skill)
                 skill_level = level
 
                 val_magic_skills_current = (student["_id"],
@@ -90,22 +93,7 @@ class MysqlDataLayer:
             for (skill, level) in student["desireSkills"].items():
                 sql_magic_skills = "INSERT INTO magic_skills (student_id,skill_id,skill_type_id, skill_level) VALUES " \
                                    "(%s, %s,%s,%s) "
-                if skill == "potionMaking":
-                    skill_id = 1
-                elif skill == "spells":
-                    skill_id = 2
-                elif skill == "quidditch":
-                    skill_id = 3
-                elif skill == "animagus":
-                    skill_id = 4
-                elif skill == "apparate":
-                    skill_id = 5
-                elif skill == "metamorphmagi":
-                    skill_id = 6
-                elif skill == "parseltongue":
-                    skill_id = 7
-                else:
-                    skill_id = 0
+                skill_id = check_skill(skill)
                 skill_level = level
 
                 val_magic_skills_desire = (student["_id"],

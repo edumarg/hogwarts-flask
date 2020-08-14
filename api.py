@@ -17,6 +17,12 @@ def set_creatOn_lastEdid_dates(user):
     return user
 
 
+def set_id():
+    user_id = datetime.now() - datetime(2019, 4, 13)
+    user_id = int((user_id.total_seconds() * 10000 / 50) * 100000)
+    return f"{user_id}"
+
+
 # GET students
 @app.route("/students")
 def get_students():
@@ -59,6 +65,8 @@ def get_student_specific_day():
 def add_new_student():
     student = request.json
     student = set_creatOn_lastEdid_dates(student)
+    id_string = "S-" + set_id()
+    student["_id"] = id_string
     new_student = Student(student["_id"],
                           student["firstName"],
                           student["lastName"],
@@ -78,6 +86,8 @@ def add_new_student():
 def add_new_admin():
     admin = request.json
     admin = set_creatOn_lastEdid_dates(admin)
+    id_string = "A-" + set_id()
+    admin["_id"] = id_string
     new_admin = Administrator(admin["_id"],
                               admin["firstName"],
                               admin["lastName"],
