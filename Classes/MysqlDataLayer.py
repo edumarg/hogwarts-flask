@@ -131,7 +131,18 @@ class MysqlDataLayer:
 
 
         except mysql.connector.Error as error:
-            print("Failed to update record to database rollback: {}".format(error))
+            print("Failed to delete record from database table: {}".format(error))
+        finally:
+            cursor.close()
+
+    def delete_table(self, table):
+        cursor = self.__mydb.cursor()
+
+        try:
+            sql_delete_table = f"TRUNCATE TABLE {table}"
+            cursor.execute(sql_delete_table)
+        except mysql.connector.Error as error:
+            print("Failed to Delete all records from database table: {}".format(error))
         finally:
             cursor.close()
 
