@@ -112,5 +112,28 @@ class MysqlDataLayer:
         finally:
             cursor.close()
 
+    def delete_student_by_email(self, email):
+        cursor = self.__mydb.cursor()
+
+        try:
+            sql_select = f"SELECT id FROM students WHERE email =\"{email}\""
+            cursor.execute(sql_select)
+            student_id = cursor.fetchone()[0]
+            print("student_id", student_id)
+            sql_delete_student = f"DELETE FROM students WHERE email = \"{email}\""
+            cursor.execute(sql_delete_student)
+            sql_delete_magic_kill = f"DELETE FROM magic_skills WHERE student_id = \"{student_id}\""
+            cursor.execute(sql_delete_magic_kill)
+
+            # self.__mydb.commit()
+            print(cursor.rowcount, "record deleted.")
+            return cursor.rowcount
+
+
+        except mysql.connector.Error as error:
+            print("Failed to update record to database rollback: {}".format(error))
+        finally:
+            cursor.close()
+
     def shutdown_db(self):
         self.__mydb.close()

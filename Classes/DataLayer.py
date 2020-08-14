@@ -39,8 +39,8 @@ class DataLayer:
         pass
 
     def delete_student(self, email):
-        """deletes a user from the internal dictionary by its email"""
-        pass
+        """deletes a user from the DB"""
+        return DataLayer.mySQL.delete_student_by_email(email)
 
     def get_all_admins(self):
         pass
