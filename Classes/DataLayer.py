@@ -26,8 +26,7 @@ class DataLayer:
         created_at = now.strftime("%Y/%m/%d")
         student["createdOn"] = created_at
         student["lastEdit"] = created_at
-        DataLayer.mongoDB.add_student(student)
-        print("save student success\n")
+        return DataLayer.mongoDB.add_student(student)
 
     def set_admin(self, admin):
         """ add admin to mongoDB"""
@@ -35,8 +34,7 @@ class DataLayer:
         created_at = now.strftime("%Y/%m/%d")
         admin["createdOn"] = created_at
         admin["lastEdit"] = created_at
-        DataLayer.mongoDB.add_admin(admin)
-        print("save admin success\n")
+        return DataLayer.mongoDB.add_admin(admin)
 
     def get_student(self, email):
         """get student by email from the internal student dictionary"""

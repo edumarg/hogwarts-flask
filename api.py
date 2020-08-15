@@ -68,9 +68,12 @@ def add_new_student():
     student = request.json
     new_student = Student(student["_id"], student["firstName"], student["lastName"], student["email"],
                           student["createdOn"], student["lastEdit"])
-    datalayer.set_student(student)
-    response = app.response_class(response="students successfully added", status=200,
-                                  mimetype='application/json')
+    if datalayer.set_student(student):
+        response = app.response_class(response="students successfully added", status=200,
+                                      mimetype='application/json')
+    elif not datalayer.set_student(student):
+        response = app.response_class(response="student already on database", status=405,
+                                      mimetype='application/json')
     return response
 
 
@@ -79,8 +82,10 @@ def add_new_student():
 def add_new_admin():
     admin = request.json
     new_admin = Administrator(admin["id"], admin["firstName"], admin["lastName"], admin["email"], admin["password"])
-    datalayer.set_admin(admin)
-    response = app.response_class(response=json.dumps(admin), status=200, mimetype='application/json')
+    if datalayer.set_admin(admin):
+        response = app.response_class(response=json.dumps(admin), status=200, mimetype='application/json')
+    elif not datalayer.set_admin(admin):
+        response = app.response_class(response="Admin already in data Base", status=405, mimetype='application/json')
     return response
 
 

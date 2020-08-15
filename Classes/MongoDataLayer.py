@@ -14,20 +14,21 @@ class MongoDataLayer:
         self.__create()
 
     def get_all_students(self):
-        students_dict = {}
+        students_list = []
         students = self.__db["students"].find()
         for student in students:
             student['_id'] = str(student['_id'])
-            students_dict[student["_id"]] = student
-        return students_dict
+            students_list.append(student)
+        return students_list
 
     def get_all_admins(self):
-        admins_dict = {}
+        admins_list = []
         admins = self.__db["administrators"].find()
         for admin in admins:
             admin['_id'] = str(admin['_id'])
-            admins_dict[admin["_id"]] = admin
-        return admins_dict
+            # admins_dict[admin["_id"]] = admin
+            admins_list.append(admin)
+        return admins_list
 
     def get_student_by_email(self, email):
         student = self.__db["students"].find_one({"email": email})
@@ -94,7 +95,8 @@ class MongoDataLayer:
         if not admin_add:
             if "_id" in admin:
                 del admin["_id"]
-            return self.__db["administrators"].insert(admin)
+            self.__db["administrators"].insert(admin)
+            return True
         if admin_add:
             print("admin email already exist")
             return False
