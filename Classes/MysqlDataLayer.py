@@ -32,7 +32,7 @@ class MysqlDataLayer:
             database=config('DB')
         )
 
-        self.__mydb.autocommit = True
+        # self.__mydb.autocommit = True
 
     def __init__(self):
         super().__init__()
@@ -54,6 +54,7 @@ class MysqlDataLayer:
                    admin["createdOn"],
                    admin["lastEdit"])
             cursor.execute(sql, val)
+            self.__mydb.commit()
             print(cursor.rowcount, "record inserted.")
             return cursor.rowcount
         except mysql.connector.Error as error:
@@ -76,6 +77,7 @@ class MysqlDataLayer:
                            student["createdOn"],
                            student["lastEdit"])
             cursor.execute(sql_student, val_student)
+            self.__mydb.commit()
 
             for (skill, level) in student["currentSkills"].items():
                 sql_magic_skills = "INSERT INTO magic_skills (student_id,skill_id,skill_type_id, skill_level) VALUES " \
@@ -89,6 +91,7 @@ class MysqlDataLayer:
                                             skill_level
                                             )
                 cursor.execute(sql_magic_skills, val_magic_skills_current)
+                self.__mydb.commit()
 
             for (skill, level) in student["desireSkills"].items():
                 sql_magic_skills = "INSERT INTO magic_skills (student_id,skill_id,skill_type_id, skill_level) VALUES " \
@@ -101,8 +104,8 @@ class MysqlDataLayer:
                                            2,
                                            skill_level)
                 cursor.execute(sql_magic_skills, val_magic_skills_desire)
+                self.__mydb.commit()
 
-            # self.__mydb.commit()
             print(cursor.rowcount, "record inserted.")
             return cursor.rowcount
 
@@ -125,7 +128,7 @@ class MysqlDataLayer:
             sql_delete_magic_kill = f"DELETE FROM magic_skills WHERE student_id = \"{student_id}\""
             cursor.execute(sql_delete_magic_kill)
 
-            # self.__mydb.commit()
+            self.__mydb.commit()
             print(cursor.rowcount, "record deleted.")
             return cursor.rowcount
 
@@ -141,6 +144,8 @@ class MysqlDataLayer:
         try:
             sql_delete_table = f"TRUNCATE TABLE {table}"
             cursor.execute(sql_delete_table)
+            self.__mydb.commit()
+            print("Table deleted")
         except mysql.connector.Error as error:
             print("Failed to Delete all records from database table: {}".format(error))
         finally:
