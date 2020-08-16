@@ -48,16 +48,32 @@ def get_student_by_email(email):
     return response
 
 
-# GET count desired skill
+# GET count of students with specific skills
+@app.route("/skills/current")
+def get_specific_skill():
+    skill = request.args.get("skill")
+    count = datalayer.get_students_by_current_skill(skill)
+    response = app.response_class(response=json.dumps(count), status=200, mimetype="application/json")
+    return response
+
+
+# GET count of students with desired skill
 @app.route("/skills/desire")
 def get_desire_skills():
-    pass
+    skill = request.args.get("skill")
+    count = datalayer.get_students_by_desire_skill(skill)
+    response = app.response_class(response=json.dumps(count), status=200, mimetype="application/json")
+    return response
 
 
-# GET students per day
-@app.route("/students/day")
-def get_student_specific_day():
-    pass
+# GET count students per day
+@app.route("/students/createdOn")
+def get_student_count_specific_day():
+    date = request.args.get("date")
+    new_date = date.replace("_", "/")
+    count = datalayer.get_student_count_by_creteated_date(new_date)
+    response = app.response_class(response=json.dumps(count), status=200, mimetype="application/json")
+    return response
 
 
 # POST new student
@@ -117,6 +133,8 @@ def login_student():
 @app.route("/students/<email>", methods=["PUT"])
 def edit_student(email):
     student = request.json
+    now = datetime.now().strftime("%Y/%m/%d")
+    student["lastEdit"] = now
     if "_id" in student:
         del student["_id"]
     datalayer.edit_student(student)
@@ -128,6 +146,8 @@ def edit_student(email):
 @app.route("/admins/<email>", methods=["PUT"])
 def edit_admin(email):
     admin = request.json
+    now = datetime.now().strftime("%Y/%m/%d")
+    admin["lastEdit"] = now
     if "_id" in admin:
         del admin["_id"]
     datalayer.edit_admin(admin)
@@ -143,24 +163,7 @@ def delete_student(email):
     return response
 
 
-# Persist dictionary on file:
-@app.route("/students/persist")
-def persist_students():
-    datalayer.persist_students()
-    response = app.response_class(response="Data Persisted", status=200,
-                                  mimetype="application/json")
-    return response
-
-
-@app.route("/admins/persist")
-def persist_admins():
-    datalayer.persist_admins()
-    response = app.response_class(response="Data Persisted", status=200,
-                                  mimetype="application/json")
-    return response
-
-
-# Close connection with MongoDB at exit
+# Close connection with DB at exit
 @atexit.register
 def close_connection():
     datalayer.shutdown()
@@ -168,6 +171,4 @@ def close_connection():
 
 if __name__ == "__main__":
     datalayer = DataLayer()
-    # datalayer.load_students()
-    # datalayer.load_admins()
     app.run()

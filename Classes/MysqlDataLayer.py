@@ -1,6 +1,5 @@
 import mysql.connector
 from decouple import config
-
 from Classes.BaseDBLayer import BaseDBLayer
 
 
@@ -39,6 +38,34 @@ class MysqlDataLayer(BaseDBLayer):
     def __init__(self):
         super().__init__()
         self.__connect()
+
+    def get_all_students(self):
+        pass
+
+    def get_all_admins(self):
+        cursor = self.__mydb.cursor()
+        try:
+            sql = "SELECT * from administrators"
+            cursor.execute(sql)
+            admins = cursor.fetchall()
+            admins_list = []
+            if len(admins) > 0:
+                for admin in admins:
+                    admin_dict = {"_id": admin[0], "firstName": admin[1], "lastName": admin[2], "email": admin[3],
+                                  "password": admin[4], "createdOn": admin[5], "lastEdit": admin[6]}
+                    admins_list.append(admin_dict)
+            return admins_list
+        except mysql.connector.Error as error:
+            print("Failed to get admins to database rollback: {}".format(error))
+            return False
+        finally:
+            cursor.close()
+
+    def get_student_by_email(self, email):
+        pass
+
+    def get_admin_by_email(self, email):
+        pass
 
     def set_admin(self, admin):
         """appends admin to the MySQ: DB"""
@@ -117,6 +144,12 @@ class MysqlDataLayer(BaseDBLayer):
         finally:
             cursor.close()
 
+    def edit_student(self, student):
+        pass
+
+    def edit_admin(self, admin):
+        pass
+
     def delete_student_by_email(self, email):
         cursor = self.__mydb.cursor()
 
@@ -139,6 +172,15 @@ class MysqlDataLayer(BaseDBLayer):
             print("Failed to delete record from database table: {}".format(error))
         finally:
             cursor.close()
+
+    def get_student_count_by_creteated_date(self, date):
+        pass
+
+    def get_students_by_current_skill(self, skill):
+        pass
+
+    def get_students_by_desire_skill(self, skill):
+        pass
 
     def delete_table(self, table):
         cursor = self.__mydb.cursor()

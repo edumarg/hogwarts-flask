@@ -28,9 +28,18 @@ class BaseDBLayer:
 
     def edit_student(self, student):
         pass
-    
+
     def edit_admin(self, admin):
         pass
 
     def delete_student_by_email(self, email):
+        pass
+
+    def get_student_count_by_creteated_date(self, date):
+        pass
+
+    def get_students_by_current_skill(self, skill):
+        pass
+
+    def get_students_by_desire_skill(self, skill):
         pass

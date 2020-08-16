@@ -1,12 +1,13 @@
 import json
 from Classes.MongoDataLayer import MongoDataLayer
 from Classes.MysqlDataLayer import MysqlDataLayer
-from Validators.Validators import ValidateEmail
 from decouple import config
+
+from Validators.Validators import ValidateEmail
 
 
 class DataLayer:
-    if config("DB") == "Mysql":
+    if config("DB") == "MySQL":
         db = MysqlDataLayer()
     else:
         db = MongoDataLayer()
@@ -23,6 +24,19 @@ class DataLayer:
         else:
             return False
 
+    def get_all_students(self):
+        pass
+
+    def get_all_admins(self):
+        return DataLayer.db.get_all_admins()
+
+    def get_student_by_email(self, email):
+        """get student by email from the internal student dictionary"""
+        pass
+
+    def get_admin_by_email(self, email):
+        pass
+
     def set_student(self, student):
         """ add student to mongoDB"""
         return DataLayer.db.set_student(student)
@@ -30,10 +44,6 @@ class DataLayer:
     def set_admin(self, admin):
         """appends student to the students internal  dictionary"""
         return DataLayer.db.set_admin(admin)
-
-    def get_student(self, email):
-        """get student by email from the internal student dictionary"""
-        pass
 
     def edit_student(self, student):
         pass
@@ -45,10 +55,13 @@ class DataLayer:
         """deletes a user from the DB"""
         return DataLayer.db.delete_student_by_email(email)
 
-    def get_all_admins(self):
+    def get_student_count_by_creteated_date(self, date):
         pass
 
-    def get_all_students(self):
+    def get_students_by_current_skill(self, skill):
+        pass
+
+    def get_students_by_desire_skill(self, skill):
         pass
 
     def students_json(self):
