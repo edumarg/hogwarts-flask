@@ -36,7 +36,6 @@ class DataLayer:
 
     def get_admin_by_email(self, email):
         """get admin by email from the db"""
-        print("email in data", email)
         return DataLayer.db.get_admin_by_email(email)
 
     def set_student(self, student):
@@ -48,23 +47,23 @@ class DataLayer:
         return DataLayer.db.set_admin(admin)
 
     def edit_student(self, student):
-        pass
+        return DataLayer.db.edit_student(student)
 
     def edit_admin(self, admin):
-        pass
+        return DataLayer.db.edit_admin(admin)
 
     def delete_student(self, email):
         """deletes a user from the DB"""
         return DataLayer.db.delete_student_by_email(email)
 
     def get_student_count_by_creteated_date(self, date):
-        pass
+        return DataLayer.db.get_student_count_by_creteated_date(date)
 
     def get_students_by_current_skill(self, skill):
-        pass
+        return DataLayer.db.get_students_by_current_skill(skill)
 
     def get_students_by_desire_skill(self, skill):
-        pass
+        return DataLayer.db.get_students_by_desire_skill(skill)
 
     def students_json(self):
         students_as_json = json.dumps(self.get_all_students())

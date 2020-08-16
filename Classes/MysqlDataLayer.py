@@ -51,8 +51,8 @@ class MysqlDataLayer(BaseDBLayer):
             s.email,
             s.createdOn,
             s.lastEdit,
-            sk.name,
             st.type,
+            sk.name,
             ms.skill_level
             FROM magic_skills ms
             INNER JOIN students s
@@ -63,8 +63,42 @@ class MysqlDataLayer(BaseDBLayer):
             ON st.id = ms.skill_type_id"""""
             cursor.execute(sql)
             students = cursor.fetchall()
-            pprint(students, )
-            students = []
+            students_list = []
+            if len(students) > 0:
+                student_dict = {"_id": "",
+                                "firstName": "",
+                                "lastName": "",
+                                "email": "",
+                                "createdOn": "",
+                                "lastEdit": "",
+                                "currentSkills": {},
+                                "desireSkills": {}}
+
+                for student in students:
+                    if student[0] != student_dict["_id"]:
+                        count = 0
+                        student_dict = {"_id": student[0],
+                                        "firstName": student[1],
+                                        "lastName": student[2],
+                                        "email": student[3],
+                                        "createdOn": student[4],
+                                        "lastEdit": student[5],
+                                        "currentSkills": {},
+                                        "desireSkills": {}}
+                        if student[6] == "Current":
+                            student_dict["currentSkills"][student[7]] = student[8]
+                        elif student[6] == "Desire":
+                            student_dict["desireSkills"][student[7]] = student[8]
+                        count += 1
+                    elif student[0] == student_dict["_id"]:
+                        if student[6] == "Current":
+                            student_dict["currentSkills"][student[7]] = student[8]
+                        elif student[6] == "Desire":
+                            student_dict["desireSkills"][student[7]] = student[8]
+                        count += 1
+                    if count == 7:
+                        students_list.append(student_dict)
+            return students_list
 
 
         except mysql.connector.Error as error:
@@ -82,8 +116,13 @@ class MysqlDataLayer(BaseDBLayer):
             admins_list = []
             if len(admins) > 0:
                 for admin in admins:
-                    admin_dict = {"_id": admin[0], "firstName": admin[1], "lastName": admin[2], "email": admin[3],
-                                  "password": admin[4], "createdOn": admin[5], "lastEdit": admin[6]}
+                    admin_dict = {"_id": admin[0],
+                                  "firstName": admin[1],
+                                  "lastName": admin[2],
+                                  "email": admin[3],
+                                  "password": admin[4],
+                                  "createdOn": admin[5],
+                                  "lastEdit": admin[6]}
                     admins_list.append(admin_dict)
             return admins_list
         except mysql.connector.Error as error:
@@ -101,8 +140,8 @@ class MysqlDataLayer(BaseDBLayer):
                     s.email,
                     s.createdOn,
                     s.lastEdit,
-                    sk.name,
                     st.type,
+                    sk.name,
                     ms.skill_level
                     FROM magic_skills ms
                     INNER JOIN students s
@@ -112,11 +151,44 @@ class MysqlDataLayer(BaseDBLayer):
                     LEFT JOIN skill_type st
                     ON st.id = ms.skill_type_id
                     WHERE s.email = \"{email}\""""
-            # value = email
             cursor.execute(sql)
             student = cursor.fetchall()
-            pprint(student)
+            if len(student) > 0:
+                student_dict = {"_id": "",
+                                "firstName": "",
+                                "lastName": "",
+                                "email": "",
+                                "createdOn": "",
+                                "lastEdit": "",
+                                "currentSkills": {},
+                                "desireSkills": {}}
 
+            for s in student:
+                if s[0] != student_dict["_id"]:
+                    count = 0
+                    student_dict = {"_id": s[0],
+                                    "firstName": s[1],
+                                    "lastName": s[2],
+                                    "email": s[3],
+                                    "createdOn": s[4],
+                                    "lastEdit": s[5],
+                                    "currentSkills": {},
+                                    "desireSkills": {}}
+                    if s[6] == "Current":
+                        student_dict["currentSkills"][s[7]] = s[8]
+                    elif s[6] == "Desire":
+                        student_dict["desireSkills"][s[7]] = s[8]
+                    count += 1
+                elif s[0] == student_dict["_id"]:
+                    if s[6] == "Current":
+                        student_dict["currentSkills"][s[7]] = s[8]
+                    elif s[6] == "Desire":
+                        student_dict["desireSkills"][s[7]] = s[8]
+                    count += 1
+                if count == 7:
+                    pprint(student_dict)
+
+            return student_dict
         except mysql.connector.Error as error:
             print("Fail to get student by email", format(error))
             return False
@@ -124,7 +196,6 @@ class MysqlDataLayer(BaseDBLayer):
             cursor.close()
 
     def get_admin_by_email(self, email):
-        print("admin by email")
         cursor = self.__mydb.cursor()
         try:
             sql = f"SELECT * from administrators WHERE email = \"{email}\""
@@ -144,11 +215,10 @@ class MysqlDataLayer(BaseDBLayer):
             cursor.close()
 
     def set_admin(self, admin):
-        """appends admin to the MySQ: DB"""
+        """appends admin to the MySQL: DB"""
 
         cursor = self.__mydb.cursor()
         try:
-            # self.__mydb.start_transaction()
             sql = "INSERT INTO administrators (id, firstName, lastName, email, password, createdOn, lastEdit) VALUES " \
                   "(%s,%s, %s, %s, %s, %s, %s) "
             val = (admin["_id"],
@@ -228,7 +298,6 @@ class MysqlDataLayer(BaseDBLayer):
 
     def delete_student_by_email(self, email):
         cursor = self.__mydb.cursor()
-
         try:
             sql_select = f"SELECT id FROM students WHERE email =\"{email}\""
             cursor.execute(sql_select)
@@ -238,12 +307,9 @@ class MysqlDataLayer(BaseDBLayer):
             cursor.execute(sql_delete_student)
             sql_delete_magic_kill = f"DELETE FROM magic_skills WHERE student_id = \"{student_id}\""
             cursor.execute(sql_delete_magic_kill)
-
             self.__mydb.commit()
             print(cursor.rowcount, "record deleted.")
             return cursor.rowcount
-
-
         except mysql.connector.Error as error:
             print("Failed to delete record from database table: {}".format(error))
         finally:
