@@ -130,12 +130,15 @@ class MysqlDataLayer(BaseDBLayer):
             sql = f"SELECT * from administrators WHERE email = \"{email}\""
             cursor.execute(sql)
             admin = cursor.fetchone()
+            admin_dict = {"_id": admin[0], "firstName": admin[1], "lastName": admin[2], "email": admin[3],
+                          "password": admin[4], "createdOn": admin[5], "lastEdit": admin[6]}
+
             if admin:
-                return admin
+                return admin_dict
             else:
                 return False
         except mysql.connector.Error as error:
-            print("Failed to get admins", format(error))
+            print("Failed to get admin by mail", format(error))
             return False
         finally:
             cursor.close()

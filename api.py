@@ -57,11 +57,9 @@ def get_student_by_email(email):
 def get_admin_by_email(email):
     admin = datalayer.get_admin_by_email(email)
     if admin:
-        response = app.response_class(response=json.dumps(admin), status=200,
-                                      mimetype="application/json")
+        response = app.response_class(response=json.dumps(admin), status=200, mimetype="application/json")
     else:
-        response = app.response_class(response="Administrator not found", status=200,
-                                      mimetype="application/json")
+        response = app.response_class(response="Administrator not found", status=200, mimetype="application/json")
     return response
 
 

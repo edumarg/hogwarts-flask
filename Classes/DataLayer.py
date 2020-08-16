@@ -36,7 +36,8 @@ class DataLayer:
 
     def get_admin_by_email(self, email):
         """get admin by email from the db"""
-        return DataLayer.get_admin_by_email(email)
+        print("email in data", email)
+        return DataLayer.db.get_admin_by_email(email)
 
     def set_student(self, student):
         """ add student to db"""
