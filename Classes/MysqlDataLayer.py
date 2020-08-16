@@ -1,6 +1,7 @@
 import mysql.connector
 from decouple import config
 from Classes.BaseDBLayer import BaseDBLayer
+from pprint import pprint
 
 
 def check_skill(skill):
@@ -40,7 +41,37 @@ class MysqlDataLayer(BaseDBLayer):
         self.__connect()
 
     def get_all_students(self):
-        pass
+        cursor = self.__mydb.cursor()
+        print("Get all students")
+        try:
+            sql = """SELECT 
+            s.id,
+            s.firstName,
+            s.lastName,
+            s.email,
+            s.createdOn,
+            s.lastEdit,
+            sk.name,
+            st.type,
+            ms.skill_level
+            FROM magic_skills ms
+            INNER JOIN students s
+            ON s.id = ms.student_id
+            LEFT JOIN skills sk 
+            ON sk.id = ms.skill_id
+            LEFT JOIN skill_type st
+            ON st.id = ms.skill_type_id"""""
+            cursor.execute(sql)
+            students = cursor.fetchall()
+            pprint(students, )
+            students = []
+
+
+        except mysql.connector.Error as error:
+            print("Failed to get Students", format(error))
+            return False
+        finally:
+            cursor.close()
 
     def get_all_admins(self):
         cursor = self.__mydb.cursor()
@@ -56,16 +87,58 @@ class MysqlDataLayer(BaseDBLayer):
                     admins_list.append(admin_dict)
             return admins_list
         except mysql.connector.Error as error:
-            print("Failed to get admins to database rollback: {}".format(error))
+            print("Failed to get admins", format(error))
             return False
         finally:
             cursor.close()
 
     def get_student_by_email(self, email):
-        pass
+        cursor = self.__mydb.cursor()
+        try:
+            sql = f"""SELECT s.id,
+                    s.firstName,
+                    s.lastName,
+                    s.email,
+                    s.createdOn,
+                    s.lastEdit,
+                    sk.name,
+                    st.type,
+                    ms.skill_level
+                    FROM magic_skills ms
+                    INNER JOIN students s
+                    ON s.id = ms.student_id
+                    LEFT JOIN skills sk 
+                    ON sk.id = ms.skill_id
+                    LEFT JOIN skill_type st
+                    ON st.id = ms.skill_type_id
+                    WHERE s.email = \"{email}\""""
+            # value = email
+            cursor.execute(sql)
+            student = cursor.fetchall()
+            pprint(student)
+
+        except mysql.connector.Error as error:
+            print("Fail to get student by email", format(error))
+            return False
+        finally:
+            cursor.close()
 
     def get_admin_by_email(self, email):
-        pass
+        print("admin by email")
+        cursor = self.__mydb.cursor()
+        try:
+            sql = f"SELECT * from administrators WHERE email = \"{email}\""
+            cursor.execute(sql)
+            admin = cursor.fetchone()
+            if admin:
+                return admin
+            else:
+                return False
+        except mysql.connector.Error as error:
+            print("Failed to get admins", format(error))
+            return False
+        finally:
+            cursor.close()
 
     def set_admin(self, admin):
         """appends admin to the MySQ: DB"""

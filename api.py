@@ -42,9 +42,26 @@ def get_admins():
 # GET student by email
 @app.route("/students/<email>")
 def get_student_by_email(email):
-    student = datalayer.get_student(email)
-    response = app.response_class(response=json.dumps(student), status=200,
-                                  mimetype="application/json")
+    student = datalayer.get_student_by_email(email)
+    if student:
+        response = app.response_class(response=json.dumps(student), status=200,
+                                      mimetype="application/json")
+    else:
+        response = app.response_class(response="student not found", status=200,
+                                      mimetype="application/json")
+    return response
+
+
+# GET admin by email
+@app.route("/admins/<email>")
+def get_admin_by_email(email):
+    admin = datalayer.get_admin_by_email(email)
+    if admin:
+        response = app.response_class(response=json.dumps(admin), status=200,
+                                      mimetype="application/json")
+    else:
+        response = app.response_class(response="Administrator not found", status=200,
+                                      mimetype="application/json")
     return response
 
 

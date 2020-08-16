@@ -25,24 +25,25 @@ class DataLayer:
             return False
 
     def get_all_students(self):
-        pass
+        return DataLayer.db.get_all_students()
 
     def get_all_admins(self):
         return DataLayer.db.get_all_admins()
 
     def get_student_by_email(self, email):
-        """get student by email from the internal student dictionary"""
-        pass
+        """get student by email from the  students db"""
+        return DataLayer.db.get_student_by_email(email)
 
     def get_admin_by_email(self, email):
-        pass
+        """get admin by email from the db"""
+        return DataLayer.get_admin_by_email(email)
 
     def set_student(self, student):
-        """ add student to mongoDB"""
+        """ add student to db"""
         return DataLayer.db.set_student(student)
 
     def set_admin(self, admin):
-        """appends student to the students internal  dictionary"""
+        """appends admin to the administrators db"""
         return DataLayer.db.set_admin(admin)
 
     def edit_student(self, student):
