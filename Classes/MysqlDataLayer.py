@@ -1,6 +1,8 @@
 import mysql.connector
 from decouple import config
 
+from Classes.BaseDBLayer import BaseDBLayer
+
 
 def check_skill(skill):
     if skill == "potionMaking":
@@ -22,14 +24,14 @@ def check_skill(skill):
     return skill_id
 
 
-class MysqlDataLayer:
+class MysqlDataLayer(BaseDBLayer):
 
     def __connect(self):
         self.__mydb = mysql.connector.connect(
             host="localhost",
             user=config('MYSQL_USER'),
             passwd=config('PASSWORD'),
-            database=config('DB')
+            database=config('database')
         )
 
         # self.__mydb.autocommit = True
@@ -38,7 +40,7 @@ class MysqlDataLayer:
         super().__init__()
         self.__connect()
 
-    def set_admin(self, admin):
+    def add_admin(self, admin):
         """appends admin to the MySQ: DB"""
 
         cursor = self.__mydb.cursor()
@@ -56,13 +58,14 @@ class MysqlDataLayer:
             cursor.execute(sql, val)
             self.__mydb.commit()
             print(cursor.rowcount, "record inserted.")
-            return cursor.rowcount
+            return True
         except mysql.connector.Error as error:
             print("Failed to update record to database rollback: {}".format(error))
+            return False
         finally:
             cursor.close()
 
-    def set_student(self, student):
+    def add_student(self, student):
         """appends student to the MySQ: DB"""
 
         cursor = self.__mydb.cursor()
@@ -107,11 +110,10 @@ class MysqlDataLayer:
                 self.__mydb.commit()
 
             print(cursor.rowcount, "record inserted.")
-            return cursor.rowcount
-
+            return True
         except mysql.connector.Error as error:
             print("Failed to update record to database rollback: {}".format(error))
-
+            return False
         finally:
             cursor.close()
 

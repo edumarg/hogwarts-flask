@@ -1,11 +1,10 @@
 import pymongo
-import json
-
 from Classes.Administrator import Administrator
+from Classes.BaseDBLayer import BaseDBLayer
 from Classes.Student import Student
 
 
-class MongoDataLayer:
+class MongoDataLayer(BaseDBLayer):
     def __create(self):
         self.__client = pymongo.MongoClient("localhost", 27017)
         self.__db = self.__client["hogwarts"]
