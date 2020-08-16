@@ -40,7 +40,7 @@ class MysqlDataLayer(BaseDBLayer):
         super().__init__()
         self.__connect()
 
-    def add_admin(self, admin):
+    def set_admin(self, admin):
         """appends admin to the MySQ: DB"""
 
         cursor = self.__mydb.cursor()
@@ -65,7 +65,7 @@ class MysqlDataLayer(BaseDBLayer):
         finally:
             cursor.close()
 
-    def add_student(self, student):
+    def set_student(self, student):
         """appends student to the MySQ: DB"""
 
         cursor = self.__mydb.cursor()

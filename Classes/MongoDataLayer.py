@@ -31,8 +31,8 @@ class MongoDataLayer(BaseDBLayer):
     def get_student_by_email(self, email):
         student = self.__db["students"].find_one({"email": email})
         student['_id'] = str(student['_id'])
-        student_found = Student(student["_id"], student["firstName"], student["lastName"], student["email"],
-                                student["createdOn"], student["lastEdit"])
+        # student_found = Student(student["_id"], student["firstName"], student["lastName"], student["email"],
+        #                         student["createdOn"], student["lastEdit"])
         return student
 
     def get_admin_by_email(self, email):
@@ -42,7 +42,7 @@ class MongoDataLayer(BaseDBLayer):
                                     admin["createdOn"], admin["lastEdit"])
         return admin_found
 
-    def add_student(self, student):
+    def set_student(self, student):
         student_add = self.__db["students"].find_one({"email": student["email"]})
         if not student_add:
             if "_id" in student:
@@ -52,7 +52,7 @@ class MongoDataLayer(BaseDBLayer):
         if student_add:
             return False
 
-    def add_admin(self, admin):
+    def set_admin(self, admin):
         admin_add = self.__db["administrators"].find_one({"email": admin["email"]})
         if not admin_add:
             if "_id" in admin:

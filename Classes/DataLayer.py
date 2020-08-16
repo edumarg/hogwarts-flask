@@ -1,12 +1,15 @@
 import json
-import os
-
+from Classes.MongoDataLayer import MongoDataLayer
 from Classes.MysqlDataLayer import MysqlDataLayer
 from Validators.Validators import ValidateEmail
+from decouple import config
 
 
 class DataLayer:
-    mySQL = MysqlDataLayer()
+    if config("DB") == "Mysql":
+        db = MysqlDataLayer()
+    else:
+        db = MongoDataLayer()
 
     def __init__(self):
         self._students_dictionary = {}
@@ -22,11 +25,11 @@ class DataLayer:
 
     def set_student(self, student):
         """ add student to mongoDB"""
-        return DataLayer.mySQL.add_student(student)
+        return DataLayer.db.set_student(student)
 
     def set_admin(self, admin):
         """appends student to the students internal  dictionary"""
-        return DataLayer.mySQL.add_admin(admin)
+        return DataLayer.db.set_admin(admin)
 
     def get_student(self, email):
         """get student by email from the internal student dictionary"""
@@ -40,7 +43,7 @@ class DataLayer:
 
     def delete_student(self, email):
         """deletes a user from the DB"""
-        return DataLayer.mySQL.delete_student_by_email(email)
+        return DataLayer.db.delete_student_by_email(email)
 
     def get_all_admins(self):
         pass
@@ -53,7 +56,7 @@ class DataLayer:
         return students_as_json
 
     def shutdown(self):
-        DataLayer.mySQL.shutdown()
+        DataLayer.db.shutdown()
 
     def __str__(self):
         return str(self._students_dictionary)
