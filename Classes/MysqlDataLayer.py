@@ -34,7 +34,7 @@ class MysqlDataLayer(BaseDBLayer):
             database=config('database')
         )
 
-        # self.__mydb.autocommit = True
+        self.__mydb.autocommit = False
 
     def __init__(self):
         super().__init__()
@@ -112,6 +112,7 @@ class MysqlDataLayer(BaseDBLayer):
         try:
             sql = "SELECT * from administrators"
             cursor.execute(sql)
+            self.__mydb.commit()
             admins = cursor.fetchall()
             admins_list = []
             if len(admins) > 0:
@@ -152,6 +153,7 @@ class MysqlDataLayer(BaseDBLayer):
                     ON st.id = ms.skill_type_id
                     WHERE s.email = \"{email}\""""
             cursor.execute(sql)
+
             student = cursor.fetchall()
             if len(student) > 0:
                 student_dict = {"_id": "",
@@ -191,6 +193,7 @@ class MysqlDataLayer(BaseDBLayer):
             return student_dict
         except mysql.connector.Error as error:
             print("Fail to get student by email", format(error))
+            self.__mydb.rollback()
             return False
         finally:
             cursor.close()
@@ -200,6 +203,7 @@ class MysqlDataLayer(BaseDBLayer):
         try:
             sql = f"SELECT * from administrators WHERE email = \"{email}\""
             cursor.execute(sql)
+
             admin = cursor.fetchone()
             admin_dict = {"_id": admin[0], "firstName": admin[1], "lastName": admin[2], "email": admin[3],
                           "password": admin[4], "createdOn": admin[5], "lastEdit": admin[6]}
@@ -219,6 +223,7 @@ class MysqlDataLayer(BaseDBLayer):
 
         cursor = self.__mydb.cursor()
         try:
+
             sql = "INSERT INTO administrators (id, firstName, lastName, email, password, createdOn, lastEdit) VALUES " \
                   "(%s,%s, %s, %s, %s, %s, %s) "
             val = (admin["_id"],
@@ -244,6 +249,7 @@ class MysqlDataLayer(BaseDBLayer):
         cursor = self.__mydb.cursor()
 
         try:
+            self.__mydb.start_transaction()
             sql_student = "INSERT INTO students (id, firstName, lastName, email, createdOn, lastEdit) VALUES " \
                           "(%s,%s,%s,%s,%s,%s) "
             val_student = (student["_id"],
@@ -253,7 +259,6 @@ class MysqlDataLayer(BaseDBLayer):
                            student["createdOn"],
                            student["lastEdit"])
             cursor.execute(sql_student, val_student)
-            self.__mydb.commit()
 
             for (skill, level) in student["currentSkills"].items():
                 sql_magic_skills = "INSERT INTO magic_skills (student_id,skill_id,skill_type_id, skill_level) VALUES " \
@@ -267,7 +272,6 @@ class MysqlDataLayer(BaseDBLayer):
                                             skill_level
                                             )
                 cursor.execute(sql_magic_skills, val_magic_skills_current)
-                self.__mydb.commit()
 
             for (skill, level) in student["desireSkills"].items():
                 sql_magic_skills = "INSERT INTO magic_skills (student_id,skill_id,skill_type_id, skill_level) VALUES " \
@@ -280,38 +284,73 @@ class MysqlDataLayer(BaseDBLayer):
                                            2,
                                            skill_level)
                 cursor.execute(sql_magic_skills, val_magic_skills_desire)
-                self.__mydb.commit()
 
+            self.__mydb.commit()
             print(cursor.rowcount, "record inserted.")
             return True
         except mysql.connector.Error as error:
             print("Failed to update record to database rollback: {}".format(error))
+            self.__mydb.rollback()
             return False
         finally:
             cursor.close()
 
     def edit_student(self, student):
-        pass
+        cursor = self.__mydb.cursor()
+        try:
+            self.__mydb.start_transaction()
+            # logica
+            self.__mydb.commit()
+            pass
+        except mysql.connector.Error as error:
+            print("Failed to update record to database rollback: {}".format(error))
+            self.__mydb.rollback()
+            return False
+        finally:
+            cursor.close()
 
     def edit_admin(self, admin):
-        pass
+        cursor = self.__mydb.cursor()
+        try:
+
+            sql = "UPDATE administrators SET firstName = %s, lastName = %s, email=%s , lastEdit = %s, password = %s " \
+                  "WHERE email = %s "
+            values = (admin["firstName"],
+                      admin["lastName"],
+                      admin["email"],
+                      admin["password"],
+                      admin["lastEdit"],
+                      admin["email"])
+            cursor.execute(sql, values)
+            self.__mydb.commit()
+            print(cursor.rowcount, "record inserted.")
+            return True
+        except mysql.connector.Error as error:
+            print("Failed to update record to database rollback: {}".format(error))
+            self.__mydb.rollback()
+            return False
+        finally:
+            cursor.close()
 
     def delete_student_by_email(self, email):
         cursor = self.__mydb.cursor()
         try:
-            sql_select = f"SELECT id FROM students WHERE email =\"{email}\""
-            cursor.execute(sql_select)
+            self.__mydb.start_transaction()
+            sql_select = f"SELECT id FROM students WHERE email = %s"
+            email = email
+            cursor.execute(sql_select, email)
             student_id = cursor.fetchone()[0]
             print("student_id", student_id)
-            sql_delete_student = f"DELETE FROM students WHERE email = \"{email}\""
-            cursor.execute(sql_delete_student)
-            sql_delete_magic_kill = f"DELETE FROM magic_skills WHERE student_id = \"{student_id}\""
-            cursor.execute(sql_delete_magic_kill)
+            sql_delete_student = f"DELETE FROM students WHERE email = %s"
+            cursor.execute(sql_delete_student, email)
+            sql_delete_magic_kill = f"DELETE FROM magic_skills WHERE student_id = %s"
+            cursor.execute(sql_delete_magic_kill, student_id)
             self.__mydb.commit()
             print(cursor.rowcount, "record deleted.")
             return cursor.rowcount
         except mysql.connector.Error as error:
             print("Failed to delete record from database table: {}".format(error))
+            self.__mydb.rollback()
         finally:
             cursor.close()
 

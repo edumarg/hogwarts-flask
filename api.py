@@ -163,10 +163,10 @@ def edit_admin(email):
     admin = request.json
     now = datetime.now().strftime("%Y/%m/%d")
     admin["lastEdit"] = now
-    if "_id" in admin:
-        del admin["_id"]
-    datalayer.edit_admin(admin)
-    response = app.response_class(response="Admin Edited successfully", status=200, mimetype='application/json')
+    if datalayer.edit_admin(admin):
+        response = app.response_class(response="Admin Edited successfully", status=200, mimetype='application/json')
+    else:
+        response = app.response_class(response="Admin NOT Edited", status=200, mimetype='application/json')
     return response
 
 
