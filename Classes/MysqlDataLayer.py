@@ -384,15 +384,27 @@ class MysqlDataLayer(BaseDBLayer):
             cursor.execute(sql_delete_magic_kill, student_id)
             self.__mydb.commit()
             print(cursor.rowcount, "record deleted.")
-            return cursor.rowcount
+            return True
         except mysql.connector.Error as error:
             print("Failed to delete record from database table: {}".format(error))
             self.__mydb.rollback()
+            return False
         finally:
             cursor.close()
 
     def get_student_count_by_creteated_date(self, date):
-        pass
+        cursor = self.__mydb.cursor()
+        try:
+            sql = "SELECT COUNT(*) FROM administrators where createdOn = %s"
+            value = (date,)
+            cursor.execute(sql, value)
+            students_count = cursor.fetchone()[0]
+            return students_count
+        except mysql.connector.Error as error:
+            print("Failed to get record".format(error))
+            return False
+        finally:
+            cursor.close()
 
     def get_students_by_current_skill(self, skill):
         pass
@@ -402,14 +414,15 @@ class MysqlDataLayer(BaseDBLayer):
 
     def delete_table(self, table):
         cursor = self.__mydb.cursor()
-
         try:
             sql_delete_table = f"TRUNCATE TABLE {table}"
             cursor.execute(sql_delete_table)
             self.__mydb.commit()
             print("Table deleted")
+            return True
         except mysql.connector.Error as error:
             print("Failed to Delete all records from database table: {}".format(error))
+            return False
         finally:
             cursor.close()
 
