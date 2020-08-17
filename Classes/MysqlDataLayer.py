@@ -24,6 +24,24 @@ def check_skill(skill):
     return skill_id
 
 
+def skill_to_text(skill):
+    if skill.lower() == "potionmaking":
+        skill_str = "Potion Making"
+    elif skill.lower() == "spells":
+        skill_str = "Spells"
+    elif skill.lower() == "quidditch":
+        skill_str = "Quidditch"
+    elif skill.lower() == "animagus":
+        skill_str = "Animagus"
+    elif skill.lower() == "apparate":
+        skill_str = "Apparate"
+    elif skill.lower() == "metamorphmagi":
+        skill_str = "Metamorphmagi"
+    elif skill.lower() == "parseltongue":
+        skill_str = "Parseltongue"
+    return skill_str
+
+
 class MysqlDataLayer(BaseDBLayer):
 
     def __connect(self):
@@ -407,10 +425,56 @@ class MysqlDataLayer(BaseDBLayer):
             cursor.close()
 
     def get_students_by_current_skill(self, skill):
-        pass
+        skill_str = skill_to_text(skill)
+        cursor = self.__mydb.cursor()
+        try:
+            sql = """SELECT count(s.id)
+                    from magic_skills ms
+                    inner JOIN students s
+                    ON s.id = ms.student_id
+                    inner JOIN skills sk 
+                    ON sk.id = ms.skill_id
+                    inner JOIN skill_type st
+                    ON st.id = ms.skill_type_id
+                    where type = %s and name = %s and skill_level> %s"""
+            values = ("current",
+                      skill_str,
+                      1)
+            cursor.execute(sql, values)
+            students_count = cursor.fetchone()[0]
+            print(students_count)
+            return students_count
+        except mysql.connector.Error as error:
+            print("Failed to get record".format(error))
+            return False
+        finally:
+            cursor.close()
 
     def get_students_by_desire_skill(self, skill):
-        pass
+        skill_str = skill_to_text(skill)
+        cursor = self.__mydb.cursor()
+        try:
+            sql = """SELECT count(s.id)
+                            from magic_skills ms
+                            inner JOIN students s
+                            ON s.id = ms.student_id
+                            inner JOIN skills sk 
+                            ON sk.id = ms.skill_id
+                            inner JOIN skill_type st
+                            ON st.id = ms.skill_type_id
+                            where type = %s and name = %s and skill_level> %s"""
+            values = ("desire",
+                      skill_str,
+                      1)
+            cursor.execute(sql, values)
+            students_count = cursor.fetchone()[0]
+            print(students_count)
+            return students_count
+        except mysql.connector.Error as error:
+            print("Failed to get record".format(error))
+            return False
+        finally:
+            cursor.close()
 
     def delete_table(self, table):
         cursor = self.__mydb.cursor()
