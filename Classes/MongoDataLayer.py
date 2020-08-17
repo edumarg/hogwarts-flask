@@ -64,11 +64,11 @@ class MongoDataLayer(BaseDBLayer):
             print("admin email already exist")
             return False
 
-    def edit_student(self, student):
-        return self.__db["students"].update({"email": student["email"]}, student)
+    def edit_student(self, student, email):
+        return self.__db["students"].update({"email": email}, student)
 
-    def edit_admin(self, admin):
-        return self.__db["administrators"].update({"email": admin["email"]}, admin)
+    def edit_admin(self, admin, email):
+        return self.__db["administrators"].update({"email": email}, admin)
 
     def delete_student_by_email(self, email):
         student_delete = self.__db["students"].find_one({"email": email})

@@ -26,10 +26,10 @@ class BaseDBLayer:
     def add_admin(self, admin):
         pass
 
-    def edit_student(self, student):
+    def edit_student(self, student, email):
         pass
 
-    def edit_admin(self, admin):
+    def edit_admin(self, admin, email):
         pass
 
     def delete_student_by_email(self, email):

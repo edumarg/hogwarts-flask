@@ -99,8 +99,6 @@ class MysqlDataLayer(BaseDBLayer):
                     if count == 7:
                         students_list.append(student_dict)
             return students_list
-
-
         except mysql.connector.Error as error:
             print("Failed to get Students", format(error))
             return False
@@ -151,8 +149,9 @@ class MysqlDataLayer(BaseDBLayer):
                     ON sk.id = ms.skill_id
                     LEFT JOIN skill_type st
                     ON st.id = ms.skill_type_id
-                    WHERE s.email = \"{email}\""""
-            cursor.execute(sql)
+                    WHERE email = %s"""
+            email = (email,)
+            cursor.execute(sql, email)
 
             student = cursor.fetchall()
             if len(student) > 0:
@@ -295,13 +294,53 @@ class MysqlDataLayer(BaseDBLayer):
         finally:
             cursor.close()
 
-    def edit_student(self, student):
+    def edit_student(self, student, email):
         cursor = self.__mydb.cursor()
         try:
             self.__mydb.start_transaction()
-            # logica
+            sql_select = "SELECT id FROM students WHERE email = %s "
+            cursor.execute(sql_select, (email,))
+            student_id = cursor.fetchone()
+            print(student_id[0])
+
+            sql_update_student = "UPDATE students SET firstName = %s, lastName = %s, email = %s, lastEdit= %s" \
+                                 " WHERE email= %s"
+            values_update_student = (student["firstName"],
+                                     student["lastName"],
+                                     student["email"],
+                                     student["lastEdit"],
+                                     email)
+            cursor.execute(sql_update_student, values_update_student)
+
+            for (skill, level) in student["currentSkills"].items():
+                sql_update_magic_skill_current = "UPDATE magic_skills SET skill_level=%s" \
+                                                 " WHERE student_id = %s AND skill_type_id = %s AND skill_id = %s"
+                skill_id = check_skill(skill)
+                skill_level = level
+
+                values_update_magic_skills_current = (
+                    skill_level,
+                    student_id[0],
+                    1,
+                    skill_id
+                )
+                cursor.execute(sql_update_magic_skill_current, values_update_magic_skills_current)
+
+            for (skill, level) in student["desireSkills"].items():
+                sql_update_magic_skill_desire = "UPDATE magic_skills SET skill_level=%s" \
+                                                " WHERE student_id = %s AND skill_type_id = %s AND skill_id = %s"
+                skill_id = check_skill(skill)
+                skill_level = level
+                values_update_magic_skills_desire = (
+                    skill_level,
+                    student_id[0],
+                    2,
+                    skill_id
+                )
+                cursor.execute(sql_update_magic_skill_desire, values_update_magic_skills_desire)
+
             self.__mydb.commit()
-            pass
+            return True
         except mysql.connector.Error as error:
             print("Failed to update record to database rollback: {}".format(error))
             self.__mydb.rollback()
@@ -309,18 +348,17 @@ class MysqlDataLayer(BaseDBLayer):
         finally:
             cursor.close()
 
-    def edit_admin(self, admin):
+    def edit_admin(self, admin, email):
         cursor = self.__mydb.cursor()
         try:
-
             sql = "UPDATE administrators SET firstName = %s, lastName = %s, email=%s , lastEdit = %s, password = %s " \
                   "WHERE email = %s "
             values = (admin["firstName"],
                       admin["lastName"],
                       admin["email"],
-                      admin["password"],
                       admin["lastEdit"],
-                      admin["email"])
+                      admin["password"],
+                      email)
             cursor.execute(sql, values)
             self.__mydb.commit()
             print(cursor.rowcount, "record inserted.")
@@ -337,12 +375,11 @@ class MysqlDataLayer(BaseDBLayer):
         try:
             self.__mydb.start_transaction()
             sql_select = f"SELECT id FROM students WHERE email = %s"
-            email = email
-            cursor.execute(sql_select, email)
+            cursor.execute(sql_select, (email,))
             student_id = cursor.fetchone()[0]
             print("student_id", student_id)
             sql_delete_student = f"DELETE FROM students WHERE email = %s"
-            cursor.execute(sql_delete_student, email)
+            cursor.execute(sql_delete_student, (email,))
             sql_delete_magic_kill = f"DELETE FROM magic_skills WHERE student_id = %s"
             cursor.execute(sql_delete_magic_kill, student_id)
             self.__mydb.commit()

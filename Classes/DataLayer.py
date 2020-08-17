@@ -46,11 +46,11 @@ class DataLayer:
         """appends admin to the administrators db"""
         return DataLayer.db.set_admin(admin)
 
-    def edit_student(self, student):
-        return DataLayer.db.edit_student(student)
+    def edit_student(self, student, email):
+        return DataLayer.db.edit_student(student, email)
 
-    def edit_admin(self, admin):
-        return DataLayer.db.edit_admin(admin)
+    def edit_admin(self, admin, email):
+        return DataLayer.db.edit_admin(admin, email)
 
     def delete_student(self, email):
         """deletes a user from the DB"""

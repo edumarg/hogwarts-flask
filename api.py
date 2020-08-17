@@ -152,8 +152,10 @@ def edit_student(email):
     student["lastEdit"] = now
     if "_id" in student:
         del student["_id"]
-    datalayer.edit_student(student)
-    response = app.response_class(response="Student Edited successfully", status=200, mimetype='application/json')
+    if datalayer.edit_student(student, email):
+        response = app.response_class(response="Student Edited successfully", status=200, mimetype='application/json')
+    else:
+        response = app.response_class(response="Student NOT Edited", status=200, mimetype='application/json')
     return response
 
 
@@ -163,7 +165,7 @@ def edit_admin(email):
     admin = request.json
     now = datetime.now().strftime("%Y/%m/%d")
     admin["lastEdit"] = now
-    if datalayer.edit_admin(admin):
+    if datalayer.edit_admin(admin, email):
         response = app.response_class(response="Admin Edited successfully", status=200, mimetype='application/json')
     else:
         response = app.response_class(response="Admin NOT Edited", status=200, mimetype='application/json')
