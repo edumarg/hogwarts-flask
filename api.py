@@ -61,7 +61,7 @@ def get_student_by_email(email):
         response = app.response_class(response=json.dumps(student), status=200,
                                       mimetype="application/json")
     else:
-        response = app.response_class(response="student not found", status=200,
+        response = app.response_class(response="", status=200,
                                       mimetype="application/json")
     return response
 
@@ -73,7 +73,7 @@ def get_admin_by_email(email):
     if admin:
         response = app.response_class(response=json.dumps(admin), status=200, mimetype="application/json")
     else:
-        response = app.response_class(response="Administrator not found", status=200, mimetype="application/json")
+        response = app.response_class(response="", status=200, mimetype="application/json")
     return response
 
 
@@ -152,12 +152,6 @@ def add_new_admin():
     return response
 
 
-# POST login admin
-@app.route("/login", methods=["POST"])
-def login_student():
-    pass
-
-
 # EDIT student
 @app.route("/students/<string:email>", methods=["PUT"])
 def edit_student(email):
@@ -179,6 +173,8 @@ def edit_admin(email):
     admin = request.json
     now = datetime.now().strftime("%Y/%m/%d")
     admin["lastEdit"] = now
+    if "_id" in admin:
+        del admin["_id"]
     if datalayer.edit_admin(admin, email):
         response = app.response_class(response="Admin Edited successfully", status=200, mimetype='application/json')
     else:
