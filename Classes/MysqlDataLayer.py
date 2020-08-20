@@ -17,7 +17,7 @@ def check_skill(skill):
         skill_id = 5
     elif skill == "metamorphmagi":
         skill_id = 6
-    elif skill == "parseltongue":
+    elif skill == "parselongue":
         skill_id = 7
     else:
         skill_id = 0
@@ -37,8 +37,8 @@ def skill_to_text(skill):
         skill_str = "Apparate"
     elif skill.lower() == "metamorphmagi":
         skill_str = "Metamorphmagi"
-    elif skill.lower() == "parseltongue":
-        skill_str = "Parseltongue"
+    elif skill.lower() == "parselongue":
+        skill_str = "Parselongue"
     return skill_str
 
 
@@ -46,7 +46,7 @@ class MysqlDataLayer(BaseDBLayer):
 
     def __connect(self):
         self.__mydb = mysql.connector.connect(
-            host="localhost",
+            host=config('host'),
             user=config('MYSQL_USER'),
             passwd=config('PASSWORD'),
             database=config('database')
@@ -58,9 +58,21 @@ class MysqlDataLayer(BaseDBLayer):
         super().__init__()
         self.__connect()
 
+    def verify_login(self, user):
+        admin = self.get_admin_by_email(user["email"])
+        if admin:
+            if admin["email"] == user["email"] and admin["password"] == user["password"]:
+                print("login success")
+                return admin
+            else:
+                print("login failed")
+                return False
+        else:
+            print("login failed")
+            return False
+
     def get_all_students(self):
         cursor = self.__mydb.cursor()
-        print("Get all students")
         try:
             sql = """SELECT 
             s.id,
@@ -81,7 +93,8 @@ class MysqlDataLayer(BaseDBLayer):
             ON st.id = ms.skill_type_id"""""
             cursor.execute(sql)
             students = cursor.fetchall()
-            students_list = []
+            # students_list = []
+            students_dict = {}
             if len(students) > 0:
                 student_dict = {"_id": "",
                                 "firstName": "",
@@ -115,8 +128,9 @@ class MysqlDataLayer(BaseDBLayer):
                             student_dict["desireSkills"][student[7]] = student[8]
                         count += 1
                     if count == 7:
-                        students_list.append(student_dict)
-            return students_list
+                        # students_list.append(student_dict)
+                        students_dict[student[0]] = student_dict
+            return students_dict
         except mysql.connector.Error as error:
             print("Failed to get Students", format(error))
             return False
@@ -126,9 +140,9 @@ class MysqlDataLayer(BaseDBLayer):
     def get_all_admins(self):
         cursor = self.__mydb.cursor()
         try:
-            sql = "SELECT * from administrators"
+            sql = "SELECT * FROM administrators"
             cursor.execute(sql)
-            self.__mydb.commit()
+
             admins = cursor.fetchall()
             admins_list = []
             if len(admins) > 0:
@@ -442,7 +456,6 @@ class MysqlDataLayer(BaseDBLayer):
                       1)
             cursor.execute(sql, values)
             students_count = cursor.fetchone()[0]
-            print(students_count)
             return students_count
         except mysql.connector.Error as error:
             print("Failed to get record".format(error))
@@ -468,7 +481,6 @@ class MysqlDataLayer(BaseDBLayer):
                       1)
             cursor.execute(sql, values)
             students_count = cursor.fetchone()[0]
-            print(students_count)
             return students_count
         except mysql.connector.Error as error:
             print("Failed to get record".format(error))

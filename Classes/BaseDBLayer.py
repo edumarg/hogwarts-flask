@@ -8,6 +8,9 @@ class BaseDBLayer:
     def shutdown(self):
         pass
 
+    def verify_login(self, user):
+        pass
+
     def get_all_students(self):
         pass
 

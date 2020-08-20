@@ -1,4 +1,4 @@
-from flask import Flask, json, request
+from flask import Flask, json, request, escape
 from Classes.Administrator import Administrator
 from Classes.DataLayer import DataLayer
 from Classes.Student import Student
@@ -23,6 +23,20 @@ def set_id():
     return f"{user_id}"
 
 
+# POST login
+@app.route("/login", methods=["POST"])
+def verify_login():
+    user = request.json
+    user["email"] = escape(user["email"].lower())
+    user["password"] = escape(user["password"])
+    if datalayer.verify_login(user):
+        response = app.response_class(response=json.dumps(datalayer.verify_login(user)), status=200,
+                                      mimetype="application/json")
+    else:
+        response = app.response_class(response="", status=200, mimetype="application/json")
+    return response
+
+
 # GET students
 @app.route("/students")
 def get_students():
@@ -40,7 +54,7 @@ def get_admins():
 
 
 # GET student by email
-@app.route("/students/<email>")
+@app.route("/students/<string:email>")
 def get_student_by_email(email):
     student = datalayer.get_student_by_email(email)
     if student:
@@ -53,7 +67,7 @@ def get_student_by_email(email):
 
 
 # GET admin by email
-@app.route("/admins/<email>")
+@app.route("/admins/<string:email>")
 def get_admin_by_email(email):
     admin = datalayer.get_admin_by_email(email)
     if admin:
@@ -66,7 +80,7 @@ def get_admin_by_email(email):
 # GET count of students with specific skills
 @app.route("/skills/current")
 def get_specific_skill():
-    skill = request.args.get("skill")
+    skill = escape(request.args.get("skill"))
     count = datalayer.get_students_by_current_skill(skill)
     response = app.response_class(response=json.dumps(count), status=200, mimetype="application/json")
     return response
@@ -75,7 +89,7 @@ def get_specific_skill():
 # GET count of students with desired skill
 @app.route("/skills/desire")
 def get_desire_skills():
-    skill = request.args.get("skill")
+    skill = escape(request.args.get("skill"))
     count = datalayer.get_students_by_desire_skill(skill)
     response = app.response_class(response=json.dumps(count), status=200, mimetype="application/json")
     return response
@@ -84,7 +98,7 @@ def get_desire_skills():
 # GET count students per day
 @app.route("/students/createdOn")
 def get_student_count_specific_day():
-    date = request.args.get("date")
+    date = escape(request.args.get("date"))
     new_date = date.replace("_", "/")
     count = datalayer.get_student_count_by_creteated_date(new_date)
     response = app.response_class(response=json.dumps(count), status=200, mimetype="application/json")
@@ -145,7 +159,7 @@ def login_student():
 
 
 # EDIT student
-@app.route("/students/<email>", methods=["PUT"])
+@app.route("/students/<string:email>", methods=["PUT"])
 def edit_student(email):
     student = request.json
     now = datetime.now().strftime("%Y/%m/%d")

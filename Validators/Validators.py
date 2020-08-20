@@ -60,7 +60,7 @@ class ValidatePasswordLen():
         self._password = password
 
     def length_validation(self):
-        special_characters = ["*", "<", ">", "!", "@", "#", "$", "%", "^", "&", "(", ")", "{", "}", ":", "|"]
+        special_characters = ["*", "<", ">", "!", "@", "#", "$", "%", "^", "&", "(", ")", "{", "}", ":", "|", "/", "\\"]
         for character in special_characters:
             if self._password.find(character) >= 0:
                 print(
@@ -69,8 +69,10 @@ class ValidatePasswordLen():
                 return False
             else:
                 if len(self._password) < 8:
-                    print("Please make sure your password is at least 8 Characters long\n")
+                    print("Please make sure your password is at least 8 to 16 Characters long\n")
                     return False
+                elif len(self._password) > 16:
+                    print("Please make sure your password is not longer than 16 Characters\n")
                 else:
                     return True
 
@@ -97,7 +99,7 @@ class NameLastnameValidator():
         self._last_name = last_name
 
     def validte_first_last_name(self):
-        special_characters = ["*", "<", ">", "!", "@", "#", "$", "%", "^", "&", "(", ")", "{", "}", ":", "|", ]
+        special_characters = ["*", "<", ">", "!", "@", "#", "$", "%", "^", "&", "(", ")", "{", "}", ":", "|", "/", "\\"]
         test_name = re.search("[!@#$%^&()_+={};':\",.<>/?|]", self._first_name.lower())
         test_lastname = re.search("[!@#$%^&()_+={};':\",.<>/?|]", self._last_name.lower())
         if not test_name and not test_lastname:

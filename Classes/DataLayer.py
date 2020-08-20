@@ -24,6 +24,9 @@ class DataLayer:
         else:
             return False
 
+    def verify_login(self, user):
+        return DataLayer.db.verify_login(user)
+
     def get_all_students(self):
         return DataLayer.db.get_all_students()
 

@@ -14,6 +14,20 @@ class MongoDataLayer(BaseDBLayer):
         super().__init__()
         self.__create()
 
+    def verify_login(self, user):
+        admin = self.__db["administrators"].find_one({"email": user["email"]})
+        if admin:
+            if admin["email"] == user["email"] and admin["password"] == user["password"]:
+                print("login success")
+                admin['_id'] = str(admin['_id'])
+                return admin
+            else:
+                print("login failed")
+                return False
+        else:
+            print("login failed")
+            return False
+
     def get_all_students(self):
         students_dict = {}
         students = self.__db["students"].find()
@@ -44,7 +58,7 @@ class MongoDataLayer(BaseDBLayer):
                                     admin["createdOn"], admin["lastEdit"], admin["password"])
         return admin_found
 
-    def add_student(self, student):
+    def set_student(self, student):
         student_add = self.__db["students"].find_one({"email": student["email"]})
         if not student_add:
             if "_id" in student:
@@ -54,7 +68,7 @@ class MongoDataLayer(BaseDBLayer):
         if student_add:
             return False
 
-    def add_admin(self, admin):
+    def set_admin(self, admin):
         admin_add = self.__db["administrators"].find_one({"email": admin["email"]})
         if not admin_add:
             if "_id" in admin:
@@ -102,7 +116,7 @@ class MongoDataLayer(BaseDBLayer):
     def get_students_by_desire_skill(self, skill):
         print("skill", skill)
         pipeline = self.__db["students"].aggregate([{"$project": {
-            "desire": {"$objectToArray": "$desierSkills"}}},
+            "desire": {"$objectToArray": "$desireSkills"}}},
             {"$unwind": "$desire"}])
         skill_list = list(pipeline)
         print("skill_list", skill_list)
@@ -112,6 +126,7 @@ class MongoDataLayer(BaseDBLayer):
                 if index_id["desire"]["k"] == skill:
                     if int(index_id["desire"]["v"]) >= 2:
                         count += 1
+        print(count)
         return count
 
     def backup_mongodb(self):
