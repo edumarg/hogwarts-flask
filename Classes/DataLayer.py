@@ -1,6 +1,8 @@
 import json
+
 from Classes.MongoDataLayer import MongoDataLayer
 from Classes.MysqlDataLayer import MysqlDataLayer
+from datetime import datetime
 from decouple import config
 
 from Validators.Validators import ValidateEmail
@@ -24,6 +26,7 @@ class DataLayer:
         else:
             return False
 
+
     def verify_login(self, user):
         return DataLayer.db.verify_login(user)
 
@@ -36,6 +39,7 @@ class DataLayer:
     def get_student_by_email(self, email):
         """get student by email from the  students db"""
         return DataLayer.db.get_student_by_email(email)
+
 
     def get_admin_by_email(self, email):
         """get admin by email from the db"""
@@ -68,9 +72,21 @@ class DataLayer:
     def get_students_by_desire_skill(self, skill):
         return DataLayer.db.get_students_by_desire_skill(skill)
 
+    def get_student_count_by_creteated_date(self, date):
+        return DataLayer.mongoDB.get_student_count_by_creteated_date(date)
+
+    def get_students_by_current_skill(self, skill):
+        return DataLayer.mongoDB.get_students_by_current_skill(skill)
+
+    def get_students_by_desire_skill(self, skill):
+        return DataLayer.mongoDB.get_students_by_desire_skill(skill)
+
     def students_json(self):
         students_as_json = json.dumps(self.get_all_students())
         return students_as_json
+
+    def backup_mongodb(self):
+        return DataLayer.mongoDB.backup_mongodb()
 
     def shutdown(self):
         DataLayer.db.shutdown()

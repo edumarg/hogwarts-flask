@@ -1,5 +1,6 @@
 import pymongo
 import os
+
 from Classes.Administrator import Administrator
 from Classes.BaseDBLayer import BaseDBLayer
 from Classes.Student import Student
@@ -52,6 +53,7 @@ class MongoDataLayer(BaseDBLayer):
     def get_admin_by_email(self, email):
         admin = self.__db["administrators"].find_one({"email": email})
         admin['_id'] = str(admin['_id'])
+
         return admin
 
     def set_student(self, student):
@@ -89,6 +91,7 @@ class MongoDataLayer(BaseDBLayer):
         if student_delete:
             self.__db["students"].remove({"email": email})
             return True
+
 
     def get_student_count_by_creteated_date(self, date):
         pipeline = [{"$match": {"createdOn": {"$eq": date}}}, {"$count": "count"}];

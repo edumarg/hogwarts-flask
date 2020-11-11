@@ -82,8 +82,7 @@ def get_admin_by_email(email):
 def get_specific_skill():
     skill = escape(request.args.get("skill"))
     count = datalayer.get_students_by_current_skill(skill)
-    response = app.response_class(response=json.dumps(count), status=200, mimetype="application/json")
-    return response
+
 
 
 # GET count of students with desired skill
@@ -99,6 +98,7 @@ def get_desire_skills():
 @app.route("/students/createdOn")
 def get_student_count_specific_day():
     date = escape(request.args.get("date"))
+
     new_date = date.replace("_", "/")
     count = datalayer.get_student_count_by_creteated_date(new_date)
     response = app.response_class(response=json.dumps(count), status=200, mimetype="application/json")
@@ -191,6 +191,7 @@ def delete_student(email):
 
 
 # Close connection with DB at exit
+
 @atexit.register
 def close_connection():
     datalayer.shutdown()
