@@ -5,7 +5,7 @@ from Classes.Person import Person
 
 class Administrator(Person):
     def __init__(self, _id, firstName, lastName, email, createdOn, lastEdit, password, ):
-        super(Administrator, self).__init__(_id, firstName, lastName, email)
+        super(Administrator, self).__init__(_id, firstName, lastName, email, createdOn, lastEdit)
         self._id = _id
         self._firstName = firstName
         self._lastName = lastName
